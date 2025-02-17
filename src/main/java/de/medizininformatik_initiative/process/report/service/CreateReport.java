@@ -119,7 +119,7 @@ public class CreateReport extends AbstractServiceDelegate implements Initializin
 		try
 		{
 			logger.debug("Executing report search request '{}' with {}", url,
-					fhirAsyncRequestsEnabled ? "asnyc request pattern" : "normal request pattern");
+					fhirAsyncRequestsEnabled ? "async request pattern" : "normal request pattern");
 			Resource result = doExecuteRequest(url);
 
 			entry.setResource(result);

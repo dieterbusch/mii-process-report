@@ -152,7 +152,6 @@ public class TaskProfileTest
 				.setIdentifier(NamingSystems.OrganizationIdentifier.withValue("DIC"));
 		task.getRestriction().addRecipient().setType(ResourceType.Organization.name())
 				.setIdentifier(NamingSystems.OrganizationIdentifier.withValue("DIC"));
-		;
 
 		task.addInput().setValue(new StringType(ConstantsReport.PROFILE_TASK_REPORT_AUTOSTART_STOP_MESSAGE_NAME))
 				.getType().addCoding(CodeSystems.BpmnMessage.messageName());
@@ -306,7 +305,6 @@ public class TaskProfileTest
 				.setIdentifier(NamingSystems.OrganizationIdentifier.withValue("DIC"));
 		task.getRestriction().addRecipient().setType(ResourceType.Organization.name())
 				.setIdentifier(NamingSystems.OrganizationIdentifier.withValue("DIC"));
-		;
 
 		task.addInput().setValue(new StringType(ConstantsReport.PROFILE_TASK_REPORT_SEND_MESSAGE_NAME)).getType()
 				.addCoding(CodeSystems.BpmnMessage.messageName());
@@ -363,7 +361,6 @@ public class TaskProfileTest
 				.setIdentifier(NamingSystems.OrganizationIdentifier.withValue("DIC"));
 		task.getRestriction().addRecipient().setType(ResourceType.Organization.name())
 				.setIdentifier(NamingSystems.OrganizationIdentifier.withValue("DIC"));
-		;
 
 		task.addInput().setValue(new StringType(ConstantsReport.PROFILE_TASK_REPORT_RECEIVE_MESSAGE_NAME)).getType()
 				.addCoding(CodeSystems.BpmnMessage.messageName());
