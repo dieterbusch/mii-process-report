@@ -159,8 +159,8 @@ public class FhirClientConfig
 
 	@ProcessDocumentation(processNames = {
 			"medizininformatik-initiativede_reportSend" }, description = "To enable an additional connection test on startup of the client executing FHIR asynchronous request patterns, set to `true`")
-	@Value("${de.medizininformatik.initiative.report.dic.fhir.server.async.client.connection.test:false}")
-	private boolean fhirAsyncClientConnectionTest;
+	@Value("${de.medizininformatik.initiative.report.dic.fhir.server.async.client.connection.test.enabled:false}")
+	private boolean fhirAsyncClientConnectionTestEnabled;
 
 	@Value("${dev.dsf.bpe.fhir.server.organization.identifier.value}")
 	private String localIdentifierValue;
@@ -187,7 +187,7 @@ public class FhirClientConfig
 				fhirStoreConnectTimeout, fhirStoreSocketTimeout, fhirStoreConnectionRequestTimeout, fhirStoreBaseUrl,
 				fhirStoreUsername, fhirStorePassword, fhirStoreBearerToken, tokenProvider(), proxyUrl, proxyUsername,
 				proxyPassword, fhirStoreHapiClientVerbose, fhirAsyncInitialPollingIntervalMilliseconds, fhirContext,
-				localIdentifierValue, dataLogger(), fhirAsyncClientConnectionTest, false);
+				localIdentifierValue, dataLogger(), fhirAsyncClientConnectionTestEnabled, false);
 	}
 
 	public TokenProvider tokenProvider()
