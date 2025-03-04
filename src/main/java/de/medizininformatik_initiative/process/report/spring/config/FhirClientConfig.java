@@ -153,7 +153,7 @@ public class FhirClientConfig
 	private boolean fhirDataLoggingEnabled;
 
 	@ProcessDocumentation(processNames = {
-			"medizininformatik-initiativede_reportSend" }, description = "Initial Result polling interval in milliseconds for asynchronous request pattern when executing search bundle requests, the interval will be increased tenfold after every check if a result is not ready")
+			"medizininformatik-initiativede_reportSend" }, description = "Initial result polling interval in milliseconds for asynchronous request pattern when executing search bundle requests, the interval will double after every check if a result is not ready")
 	@Value("${de.medizininformatik.initiative.report.dic.fhir.server.async.polling.interval:100}")
 	private int fhirAsyncInitialPollingIntervalMilliseconds;
 
