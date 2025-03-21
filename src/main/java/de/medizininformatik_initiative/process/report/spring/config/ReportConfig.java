@@ -105,7 +105,7 @@ public class ReportConfig
 	}
 
 	@Bean
-	@Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
+	@Scope(ConfigurableBeanFactory.SCOPE_SINGLETON)
 	public SearchQueryCheckService searchQueryCheckService()
 	{
 		return new SearchQueryCheckService();

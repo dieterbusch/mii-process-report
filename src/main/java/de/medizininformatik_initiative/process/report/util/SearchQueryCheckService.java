@@ -37,7 +37,6 @@ public class SearchQueryCheckService
 			.of(DATE_SEARCH_PARAMS.stream(), TOKEN_SEARCH_PARAMS.stream(), OTHER_SEARCH_PARAMS.stream()).flatMap(s -> s)
 			.toList();
 
-
 	public void checkBundle(Bundle bundle)
 	{
 		List<Bundle.BundleEntryComponent> searches = bundle.getEntry();
