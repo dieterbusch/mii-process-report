@@ -27,11 +27,6 @@
 		<definition value="Report status of local organization" />
 	</concept>
 	<concept>
-		<code value="search-bundle-v#{version}" />
-		<display value="Search Bundle v#{version}" />
-		<definition value="Search Bundle on which the report is based in version #{version}" />
-	</concept>
-	<concept>
 		<code value="search-bundle-response-reference" />
 		<display value="Search Bundle Response Reference" />
 		<definition value="Reference to a response search Bundle containing the report" />
@@ -50,5 +45,10 @@
 		<code value="hrp-identifier" />
 		<display value="HRP Identifier" />
 		<definition value="Identifier of the HRP where the report should be sent" />
+	</concept>
+	<concept>
+		<code value="dry-run" />
+		<display value="Dry-Run" />
+		<definition value="Report created as dry-run and not sent to HRP" />
 	</concept>
 </CodeSystem> 

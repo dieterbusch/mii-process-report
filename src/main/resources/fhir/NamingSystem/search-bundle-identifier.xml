@@ -1,0 +1,22 @@
+<NamingSystem xmlns="http://hl7.org/fhir">
+	<meta>
+		<tag>
+			<system value="http://dsf.dev/fhir/CodeSystem/read-access-tag"/>
+			<code value="ALL"/>
+		</tag>
+	</meta>
+	<name value="SearchBundleIdentifier"/>
+	<!-- status managed by bpe -->
+	<status value="unknown" />
+	<kind value="identifier"/>
+	<!-- date managed by bpe -->
+	<date value="#{date}"/>
+	<publisher value="Medizininformatik-Initiative" />
+	<responsible value="Medizininformatik-Initiative"/>
+	<description value="MII report search bundle identifier"/>
+	<usage value="Used within the MII for identification of search bundles to create CSD reports, value must be defined in the form 'search-bundle-v{process-version}'"/>
+	<uniqueId>
+		<type value="other"/>
+		<value value="http://medizininformatik-initiative.de/sid/search-bundle-identifier"/>
+	</uniqueId>
+</NamingSystem>

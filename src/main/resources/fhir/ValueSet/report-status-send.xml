@@ -42,6 +42,10 @@
 				<code value="receipt-error" />
 				<display value="Receipt error" />
 			</concept>
+			<concept>
+				<code value="dry-run" />
+				<display value="Dry-Run" />
+			</concept>
 		</include>
 	</compose>
 </ValueSet> 

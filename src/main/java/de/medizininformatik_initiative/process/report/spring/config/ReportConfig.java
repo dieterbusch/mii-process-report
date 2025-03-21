@@ -18,6 +18,7 @@ import de.medizininformatik_initiative.process.report.service.DownloadReport;
 import de.medizininformatik_initiative.process.report.service.DownloadSearchBundle;
 import de.medizininformatik_initiative.process.report.service.HandleError;
 import de.medizininformatik_initiative.process.report.service.InsertReport;
+import de.medizininformatik_initiative.process.report.service.LogDryRun;
 import de.medizininformatik_initiative.process.report.service.SelectTargetDic;
 import de.medizininformatik_initiative.process.report.service.SelectTargetHrp;
 import de.medizininformatik_initiative.process.report.service.SetTimer;
@@ -41,6 +42,11 @@ public class ReportConfig
 			"medizininformatik-initiativede_reportSend" }, description = "The identifier of the HRP which should receive the report", recommendation = "Only configure if more than one HRP exists in your network", example = "forschen-fuer-gesundheit.de")
 	@Value("${de.medizininformatik.initiative.report.dic.hrp.identifier:#{null}}")
 	private String hrpIdentifier;
+
+	@ProcessDocumentation(processNames = {
+			"medizininformatik-initiativede_reportSend" }, description = "To enable asynchronous request pattern when executing search bundle requests set to `true`")
+	@Value("${de.medizininformatik.initiative.report.dic.fhir.server.async.enabled:false}")
+	private boolean fhirAsyncEnabled;
 
 	// all Processes
 
@@ -110,8 +116,15 @@ public class ReportConfig
 	public CreateReport createReport()
 	{
 		String resourceVersion = new ReportProcessPluginDefinition().getResourceVersion();
-		return new CreateReport(api, resourceVersion, fhirClientConfig.fhirClientFactory(),
+		return new CreateReport(api, resourceVersion, fhirClientConfig.fhirClientFactory(), fhirAsyncEnabled,
 				fhirClientConfig.dataLogger());
+	}
+
+	@Bean
+	@Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
+	public LogDryRun logDryRun()
+	{
+		return new LogDryRun(api, reportStatusGenerator());
 	}
 
 	@Bean

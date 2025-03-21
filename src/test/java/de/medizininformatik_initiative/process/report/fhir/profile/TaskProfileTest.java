@@ -6,6 +6,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
+import org.hl7.fhir.r4.model.BooleanType;
 import org.hl7.fhir.r4.model.Reference;
 import org.hl7.fhir.r4.model.ResourceType;
 import org.hl7.fhir.r4.model.StringType;
@@ -151,7 +152,6 @@ public class TaskProfileTest
 				.setIdentifier(NamingSystems.OrganizationIdentifier.withValue("DIC"));
 		task.getRestriction().addRecipient().setType(ResourceType.Organization.name())
 				.setIdentifier(NamingSystems.OrganizationIdentifier.withValue("DIC"));
-		;
 
 		task.addInput().setValue(new StringType(ConstantsReport.PROFILE_TASK_REPORT_AUTOSTART_STOP_MESSAGE_NAME))
 				.getType().addCoding(CodeSystems.BpmnMessage.messageName());
@@ -163,6 +163,22 @@ public class TaskProfileTest
 	public void testTaskSendStartProcessProfileValid()
 	{
 		Task task = createValidTaskSendStartProcess();
+
+		ValidationResult result = resourceValidator.validate(task);
+		ValidationSupportRule.logValidationMessages(logger, result);
+
+		assertEquals(0, result.getMessages().stream().filter(m -> ResultSeverityEnum.ERROR.equals(m.getSeverity())
+				|| ResultSeverityEnum.FATAL.equals(m.getSeverity())).count());
+	}
+
+	@Test
+	public void testTaskSendStartProcessProfileValidAsDryRun()
+	{
+		Task task = createValidTaskSendStartProcess();
+		task.addInput().setValue(new BooleanType(true)).getType().addCoding()
+				.setSystem(ConstantsReport.CODESYSTEM_REPORT).setCode(ConstantsReport.CODESYSTEM_REPORT_VALUE_DRY_RUN);
+		task.addOutput(new ReportStatusGenerator()
+				.createReportStatusOutput(ConstantsReport.CODESYSTEM_REPORT_STATUS_VALUE_DRY_RUN));
 
 		ValidationResult result = resourceValidator.validate(task);
 		ValidationSupportRule.logValidationMessages(logger, result);
@@ -289,7 +305,6 @@ public class TaskProfileTest
 				.setIdentifier(NamingSystems.OrganizationIdentifier.withValue("DIC"));
 		task.getRestriction().addRecipient().setType(ResourceType.Organization.name())
 				.setIdentifier(NamingSystems.OrganizationIdentifier.withValue("DIC"));
-		;
 
 		task.addInput().setValue(new StringType(ConstantsReport.PROFILE_TASK_REPORT_SEND_MESSAGE_NAME)).getType()
 				.addCoding(CodeSystems.BpmnMessage.messageName());
@@ -346,7 +361,6 @@ public class TaskProfileTest
 				.setIdentifier(NamingSystems.OrganizationIdentifier.withValue("DIC"));
 		task.getRestriction().addRecipient().setType(ResourceType.Organization.name())
 				.setIdentifier(NamingSystems.OrganizationIdentifier.withValue("DIC"));
-		;
 
 		task.addInput().setValue(new StringType(ConstantsReport.PROFILE_TASK_REPORT_RECEIVE_MESSAGE_NAME)).getType()
 				.addCoding(CodeSystems.BpmnMessage.messageName());

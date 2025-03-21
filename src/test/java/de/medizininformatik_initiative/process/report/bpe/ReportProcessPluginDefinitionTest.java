@@ -26,11 +26,11 @@ public class ReportProcessPluginDefinitionTest
 
 		var reportReceive = resourcesByProcessId.get(ConstantsReport.PROCESS_NAME_FULL_REPORT_RECEIVE);
 		assertNotNull(reportReceive);
-		assertEquals(10, reportReceive.stream().filter(this::exists).count());
+		assertEquals(11, reportReceive.stream().filter(this::exists).count());
 
 		var reportSend = resourcesByProcessId.get(ConstantsReport.PROCESS_NAME_FULL_REPORT_SEND);
 		assertNotNull(reportSend);
-		assertEquals(12, reportSend.stream().filter(this::exists).count());
+		assertEquals(13, reportSend.stream().filter(this::exists).count());
 	}
 
 	private boolean exists(String file)

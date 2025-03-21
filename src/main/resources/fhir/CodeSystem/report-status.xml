@@ -56,4 +56,9 @@
 		<display value="Receive error" />
 		<definition value="Error receiving report from DIC" />
 	</concept>
+	<concept>
+		<code value="dry-run" />
+		<display value="Dry-Run" />
+		<definition value="Report created as dry-run and not sent to HRP" />
+	</concept>
 </CodeSystem>

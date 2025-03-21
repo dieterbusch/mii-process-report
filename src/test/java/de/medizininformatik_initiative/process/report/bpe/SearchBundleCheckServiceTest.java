@@ -16,7 +16,13 @@ public class SearchBundleCheckServiceTest
 	@Test
 	public void testValid()
 	{
-		testValid("/fhir/Bundle/search-bundle.xml");
+		testValid("/fhir/Bundle/search-bundle-valid.xml");
+	}
+
+	@Test
+	public void testValidEncounterType()
+	{
+		testValid("/fhir/Bundle/search-bundle-valid-encounter-type.xml");
 	}
 
 	@Test
@@ -98,33 +104,21 @@ public class SearchBundleCheckServiceTest
 	}
 
 	@Test
-	public void testValidV1_1()
+	public void testInvalidSingleCode()
 	{
-		testValid("/fhir/Bundle/search-bundle-v1.1.xml");
+		testInvalid("/fhir/Bundle/search-bundle-invalid-code-single.xml", "not limited to system");
 	}
 
 	@Test
-	public void testValidV1_1EncounterType()
+	public void testInvalidDoubleCode()
 	{
-		testValid("/fhir/Bundle/search-bundle-v1.1-valid-encounter-type.xml");
+		testInvalid("/fhir/Bundle/search-bundle-invalid-code-double.xml", "not limited to system");
 	}
 
 	@Test
-	public void testInvalidV1_1SingleCode()
+	public void testInvalidCodeIngredient()
 	{
-		testInvalid("/fhir/Bundle/search-bundle-v1.1-invalid-code-single.xml", "not limited to system");
-	}
-
-	@Test
-	public void testInvalidV1_1DoubleCode()
-	{
-		testInvalid("/fhir/Bundle/search-bundle-v1.1-invalid-code-double.xml", "not limited to system");
-	}
-
-	@Test
-	public void testInvalidV1_1CodeIngredient()
-	{
-		testInvalid("/fhir/Bundle/search-bundle-v1.1-invalid-code-ingredient.xml", "not limited to system");
+		testInvalid("/fhir/Bundle/search-bundle-invalid-code-ingredient.xml", "not limited to system");
 	}
 
 	private void testValid(String pathToBundle)
