@@ -153,7 +153,7 @@ public class FhirClientConfig
 	private String fhirStoreOAuth2ProxyPassword;
 
 	@ProcessDocumentation(processNames = {
-			"medizininformatik-initiativede_reportSend" }, description = "If set to true, OIDC validation will only log a warning and not throw an illegal state exception")
+			"medizininformatik-initiativede_reportSend" }, description = "If set to true, oidc validation will only log a warning and not throw an illegal state exception")
 	@Value("${de.medizininformatik.initiative.report.dic.fhir.server.oauth2.discovery.validation.lenient:false}")
 	private boolean fhirStoreOAuth2DiscoveryValidationLenient;
 
