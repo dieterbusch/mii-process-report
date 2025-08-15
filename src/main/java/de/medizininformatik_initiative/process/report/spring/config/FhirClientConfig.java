@@ -104,7 +104,7 @@ public class FhirClientConfig
 
 	@ProcessDocumentation(processNames = {
 			"medizininformatik-initiativede_reportSend" }, description = "The base url of the oidc provider", example = "http://foo.baz/realms/fhir-realm")
-	@Value("${de.medizininformatik.initiative.report.dic.fhir.server.oauth2.issuer.url:#{null}}")
+	@Value("${de.medizininformatik.initiative.report.dic.fhir.server.oauth2.url:#{null}}")
 	private String fhirStoreOAuth2IssuerUrl;
 
 	@ProcessDocumentation(processNames = {
