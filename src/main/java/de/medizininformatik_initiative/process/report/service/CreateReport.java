@@ -199,11 +199,24 @@ public class CreateReport extends AbstractServiceDelegate implements Initializin
 
 		if (responseEntry.getResource() instanceof Bundle responseEntryBundle)
 		{
+			if (fhirAsyncRequestsEnabled)
+				responseEntryBundle = flattenBundle(responseEntryBundle);
 			reportEntryBundle.setTotal(responseEntryBundle.getTotal());
 			reportEntryBundle.getMeta().setLastUpdated(responseEntryBundle.getMeta().getLastUpdated());
 		}
 
 		reportEntry.setResource(reportEntryBundle);
+	}
+
+	private Bundle flattenBundle(Bundle bundle)
+	{
+		// the structure of a async response is nested in multiple levels. Therefore this flattening is needed.
+		// see http://hl7.org/fhir/R5/async-bundle.html#3.2.6.2.4.0.3
+		if (bundle.hasEntry() && bundle.getEntryFirstRep().hasResource()
+				&& bundle.getEntryFirstRep().getResource() instanceof Bundle child)
+			return flattenBundle(child);
+		else
+			return bundle;
 	}
 
 	private void toEntryComponentCapabilityStatementResource(Bundle.BundleEntryComponent responseEntry,
