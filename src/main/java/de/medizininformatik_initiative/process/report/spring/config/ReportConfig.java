@@ -61,7 +61,9 @@ public class ReportConfig
 	@Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
 	public ProcessPluginDeploymentStateListener reportProcessPluginDeploymentStateListener()
 	{
-		return new ReportProcessPluginDeploymentStateListener(fhirClientConfig.fhirClientFactory());
+		String resourcesVersion = new ReportProcessPluginDefinition().getResourceVersion();
+		return new ReportProcessPluginDeploymentStateListener(api, fhirClientConfig.fhirClientFactory(),
+				resourcesVersion);
 	}
 
 	// reportAutostart Process

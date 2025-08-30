@@ -50,6 +50,12 @@
 			</identifier>
 		</valueReference>
 	</input>
+	<!--
+		TODO: dry-run added as part of code in class ReportProcessPluginDeploymentStateListener,
+		      because CodeSystems with different versions cannot be used in DSF API 1.x.
+		      Add again for DSF API 2.x where CodeSystem versioning is fixed.
+	-->
+	<!--
 	<input>
 		<type>
 			<coding>
@@ -59,4 +65,5 @@
 		</type>
 		<valueBoolean value="false" />
 	</input>
+	-->
 </Task>
