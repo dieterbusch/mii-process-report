@@ -48,8 +48,8 @@ public class ReportProcessPluginDeploymentStateListener
 	public void onProcessesDeployed(List<String> activeProcesses)
 	{
 		// TODO: functions updateOlderCodeSystemsIfCurrentIsNewestCodeSystem and updateDraftTaskReportSendStart
-		// 	     added because CodeSystems with different versions cannot be used in DSF API 1.x.
-		//       Remove for DSF API 2.x API where CodeSystem versioning is fixed.
+		// added because CodeSystems with different versions cannot be used in DSF API 1.x.
+		// Remove for DSF API 2.x API where CodeSystem versioning is fixed.
 
 		updateOlderCodeSystemsIfCurrentIsNewestCodeSystem(ConstantsReport.CODESYSTEM_REPORT);
 
