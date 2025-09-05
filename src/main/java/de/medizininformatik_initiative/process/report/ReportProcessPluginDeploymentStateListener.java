@@ -63,9 +63,9 @@ public class ReportProcessPluginDeploymentStateListener
 	private void updateOlderCodeSystemsIfCurrentIsNewestCodeSystem(String url)
 	{
 		Bundle searchResult = searchCodeSystem(url);
-		List<CodeSystem> allCodeSystems = extractCodeSystems(searchResult);
+		List<CodeSystem> allCodeSystems = extractCodeSystems(searchResult, url);
 
-		CodeSystem currentCodeSystem = filterCurrentCodeSystem(allCodeSystems);
+		CodeSystem currentCodeSystem = filterCurrentCodeSystem(allCodeSystems, url);
 		List<CodeSystem> olderNewerCodeSystems = filterOlderNewerCodeSystems(allCodeSystems);
 
 		if (currentIsNewestCodeSystem(olderNewerCodeSystems))
@@ -82,17 +82,17 @@ public class ReportProcessPluginDeploymentStateListener
 				Map.of("url", List.of(url)));
 	}
 
-	private List<CodeSystem> extractCodeSystems(Bundle bundle)
+	private List<CodeSystem> extractCodeSystems(Bundle bundle, String codeSystemUrl)
 	{
 		return bundle.getEntry().stream().filter(Bundle.BundleEntryComponent::hasResource)
 				.map(Bundle.BundleEntryComponent::getResource).filter(r -> r instanceof CodeSystem)
-				.map(r -> (CodeSystem) r).filter(c -> ConstantsReport.CODESYSTEM_REPORT.equals(c.getUrl())).toList();
+				.map(r -> (CodeSystem) r).filter(c -> codeSystemUrl.equals(c.getUrl())).toList();
 	}
 
-	private CodeSystem filterCurrentCodeSystem(List<CodeSystem> all)
+	private CodeSystem filterCurrentCodeSystem(List<CodeSystem> all, String codeSystemUrl)
 	{
-		return all.stream().filter(c -> resourcesVersion.equals(c.getVersion())).findFirst().orElseThrow(
-				() -> new RuntimeException("CodeSystem " + ConstantsReport.CODESYSTEM_REPORT + "|" + resourcesVersion));
+		return all.stream().filter(c -> resourcesVersion.equals(c.getVersion())).findFirst()
+				.orElseThrow(() -> new RuntimeException("CodeSystem " + codeSystemUrl + "|" + resourcesVersion));
 	}
 
 	private List<CodeSystem> filterOlderNewerCodeSystems(List<CodeSystem> all)
