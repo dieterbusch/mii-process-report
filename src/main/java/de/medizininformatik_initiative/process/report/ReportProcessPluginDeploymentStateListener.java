@@ -10,10 +10,12 @@ import java.util.stream.Collectors;
 import org.hl7.fhir.r4.model.BooleanType;
 import org.hl7.fhir.r4.model.Bundle;
 import org.hl7.fhir.r4.model.CodeSystem;
+import org.hl7.fhir.r4.model.Resource;
 import org.hl7.fhir.r4.model.Task;
 import org.springframework.beans.factory.InitializingBean;
 
 import de.medizininformatik_initiative.processes.common.fhir.client.FhirClientFactory;
+import de.medizininformatik_initiative.processes.common.util.MetadataResourceConverter;
 import dev.dsf.bpe.v1.ProcessPluginApi;
 import dev.dsf.bpe.v1.ProcessPluginDeploymentStateListener;
 
@@ -21,18 +23,18 @@ public class ReportProcessPluginDeploymentStateListener
 		implements ProcessPluginDeploymentStateListener, InitializingBean
 {
 	private final ProcessPluginApi api;
-	private final FhirClientFactory fhirClientFactory;
-	private final String resourcesVersion;
 
-	private record MinorMajorVersion(int major, int minor)
-	{
-	}
+	private final FhirClientFactory fhirClientFactory;
+
+	private final String resourcesVersion;
+	private final MetadataResourceConverter metadataResourceConverter;
 
 	public ReportProcessPluginDeploymentStateListener(ProcessPluginApi api, FhirClientFactory fhirClientFactory,
-			String resourcesVersion)
+			MetadataResourceConverter metadataResourceConverter, String resourcesVersion)
 	{
 		this.api = api;
 		this.fhirClientFactory = fhirClientFactory;
+		this.metadataResourceConverter = metadataResourceConverter;
 		this.resourcesVersion = resourcesVersion;
 	}
 
@@ -41,17 +43,20 @@ public class ReportProcessPluginDeploymentStateListener
 	{
 		Objects.requireNonNull(api, "api");
 		Objects.requireNonNull(fhirClientFactory, "fhirClientFactory");
+		Objects.requireNonNull(metadataResourceConverter, "metadataResourceConverter");
 		Objects.requireNonNull(resourcesVersion, "resourcesVersion");
 	}
 
 	@Override
 	public void onProcessesDeployed(List<String> activeProcesses)
 	{
-		// TODO: functions updateOlderCodeSystemsIfCurrentIsNewestCodeSystem and updateDraftTaskReportSendStart
-		// added because CodeSystems with different versions cannot be used in DSF API 1.x.
-		// Remove for DSF API 2.x API where CodeSystem versioning is fixed.
+		// TODO: functions metadataResourceConverter.searchAndConvertOlderResourcesIfCurrentIsNewestResource and
+		// updateDraftTaskReportSendStart added because CodeSystems with different versions cannot be used in
+		// DSF API 1.x. Remove for DSF API 2.x API where CodeSystem versioning is fixed.
 
-		updateOlderCodeSystemsIfCurrentIsNewestCodeSystem(ConstantsReport.CODESYSTEM_REPORT);
+		metadataResourceConverter.searchAndConvertOlderResourcesIfCurrentIsNewestResource(
+				ConstantsReport.CODESYSTEM_REPORT, CodeSystem.class, this::filterCodeSystemsWithNonMatchingConceptCodes,
+				this::adaptCodeSystemsReplacingConcepts);
 
 		if (activeProcesses.contains(ConstantsReport.PROCESS_NAME_FULL_REPORT_SEND))
 		{
@@ -60,87 +65,22 @@ public class ReportProcessPluginDeploymentStateListener
 		}
 	}
 
-	private void updateOlderCodeSystemsIfCurrentIsNewestCodeSystem(String url)
+	private void adaptCodeSystemsReplacingConcepts(CodeSystem currentResource, CodeSystem olderResource)
 	{
-		Bundle searchResult = searchCodeSystem(url);
-		List<CodeSystem> allCodeSystems = extractCodeSystems(searchResult, url);
-
-		CodeSystem currentCodeSystem = filterCurrentCodeSystem(allCodeSystems, url);
-		List<CodeSystem> olderNewerCodeSystems = filterOlderNewerCodeSystems(allCodeSystems);
-
-		if (currentIsNewestCodeSystem(olderNewerCodeSystems))
-		{
-			List<CodeSystem> codeSystemsWithNonMatchingConceptCodes = filterCodeSystemsWithNonMatchingConceptCodesAndAdaptToCurrentCodeSystemConceptCodes(
-					currentCodeSystem, olderNewerCodeSystems);
-			updateCodeSystemsWithNonMatchingConceptCodes(codeSystemsWithNonMatchingConceptCodes);
-		}
+		olderResource.setConcept(currentResource.getConcept());
+		updateResource(olderResource);
 	}
 
-	private Bundle searchCodeSystem(String url)
+	private boolean filterCodeSystemsWithNonMatchingConceptCodes(CodeSystem currentCodeSystem,
+			CodeSystem olderCodeSystem)
 	{
-		return api.getFhirWebserviceClientProvider().getLocalWebserviceClient().search(CodeSystem.class,
-				Map.of("url", List.of(url)));
-	}
-
-	private List<CodeSystem> extractCodeSystems(Bundle bundle, String codeSystemUrl)
-	{
-		return bundle.getEntry().stream().filter(Bundle.BundleEntryComponent::hasResource)
-				.map(Bundle.BundleEntryComponent::getResource).filter(r -> r instanceof CodeSystem)
-				.map(r -> (CodeSystem) r).filter(c -> codeSystemUrl.equals(c.getUrl())).toList();
-	}
-
-	private CodeSystem filterCurrentCodeSystem(List<CodeSystem> all, String codeSystemUrl)
-	{
-		return all.stream().filter(c -> resourcesVersion.equals(c.getVersion())).findFirst()
-				.orElseThrow(() -> new RuntimeException("CodeSystem " + codeSystemUrl + "|" + resourcesVersion));
-	}
-
-	private List<CodeSystem> filterOlderNewerCodeSystems(List<CodeSystem> all)
-	{
-		return all.stream().filter(c -> !resourcesVersion.equals(c.getVersion())).toList();
-	}
-
-	private boolean currentIsNewestCodeSystem(List<CodeSystem> olderNewerCodeSystems)
-	{
-		return olderNewerCodeSystems.stream().noneMatch(this::isNewerCodeSystem);
-	}
-
-	private boolean isNewerCodeSystem(CodeSystem codeSystem)
-	{
-		MinorMajorVersion current = getMajorMinorVersion(resourcesVersion);
-		MinorMajorVersion olderNewer = getMajorMinorVersion(codeSystem.getVersion());
-
-		return current.major <= olderNewer.major && current.minor < olderNewer.minor;
-	}
-
-	private MinorMajorVersion getMajorMinorVersion(String version)
-	{
-		if (version.matches("\\d\\.\\d"))
-		{
-			String[] minorMajor = version.split("\\.");
-			return new MinorMajorVersion(Integer.parseInt(minorMajor[0]), Integer.parseInt(minorMajor[1]));
-		}
-
-		throw new RuntimeException("Fhir resource version " + version + " does not match regex \\d\\.\\d");
-	}
-
-	private List<CodeSystem> filterCodeSystemsWithNonMatchingConceptCodesAndAdaptToCurrentCodeSystemConceptCodes(
-			CodeSystem currentCodeSystem, List<CodeSystem> olderCodeSystems)
-	{
-		Set<String> currentConceptCodes = getConceptCodes(currentCodeSystem);
-		return olderCodeSystems.stream().filter(c -> !currentConceptCodes.equals(getConceptCodes(c)))
-				.map(c -> c.setConcept(currentCodeSystem.getConcept())).toList();
+		return !getConceptCodes(currentCodeSystem).equals(getConceptCodes(olderCodeSystem));
 	}
 
 	private Set<String> getConceptCodes(CodeSystem codeSystem)
 	{
 		return codeSystem.getConcept().stream().map(CodeSystem.ConceptDefinitionComponent::getCode)
 				.collect(Collectors.toSet());
-	}
-
-	private void updateCodeSystemsWithNonMatchingConceptCodes(List<CodeSystem> codeSystems)
-	{
-		codeSystems.forEach(c -> api.getFhirWebserviceClientProvider().getLocalWebserviceClient().update(c));
 	}
 
 	private void updateDraftTaskReportSendStart()
@@ -173,7 +113,7 @@ public class ReportProcessPluginDeploymentStateListener
 					.setCode(ConstantsReport.CODESYSTEM_REPORT_VALUE_DRY_RUN);
 			task.getInput().add(dryRun);
 
-			api.getFhirWebserviceClientProvider().getLocalWebserviceClient().update(task);
+			updateResource(task);
 		}
 	}
 
@@ -185,5 +125,10 @@ public class ReportProcessPluginDeploymentStateListener
 								.anyMatch(c -> ConstantsReport.CODESYSTEM_REPORT_VALUE_DRY_RUN.equals(c.getCode())
 										&& ConstantsReport.CODESYSTEM_REPORT.equals(c.getSystem())))
 				.findAny().isEmpty();
+	}
+
+	private void updateResource(Resource resource)
+	{
+		api.getFhirWebserviceClientProvider().getLocalWebserviceClient().update(resource);
 	}
 }
