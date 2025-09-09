@@ -25,6 +25,7 @@ import de.medizininformatik_initiative.process.report.service.SetTimer;
 import de.medizininformatik_initiative.process.report.service.StoreReceipt;
 import de.medizininformatik_initiative.process.report.util.ReportStatusGenerator;
 import de.medizininformatik_initiative.process.report.util.SearchQueryCheckService;
+import de.medizininformatik_initiative.processes.common.util.MetadataResourceConverter;
 import dev.dsf.bpe.v1.ProcessPluginApi;
 import dev.dsf.bpe.v1.ProcessPluginDeploymentStateListener;
 import dev.dsf.bpe.v1.documentation.ProcessDocumentation;
@@ -58,10 +59,20 @@ public class ReportConfig
 	}
 
 	@Bean
-	@Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
+	@Scope(ConfigurableBeanFactory.SCOPE_SINGLETON)
+	public MetadataResourceConverter metadataResourceConverter()
+	{
+		String resourcesVersion = new ReportProcessPluginDefinition().getResourceVersion();
+		return new MetadataResourceConverter(api, resourcesVersion);
+	}
+
+	@Bean
+	@Scope(ConfigurableBeanFactory.SCOPE_SINGLETON)
 	public ProcessPluginDeploymentStateListener reportProcessPluginDeploymentStateListener()
 	{
-		return new ReportProcessPluginDeploymentStateListener(fhirClientConfig.fhirClientFactory());
+		String resourcesVersion = new ReportProcessPluginDefinition().getResourceVersion();
+		return new ReportProcessPluginDeploymentStateListener(api, fhirClientConfig.fhirClientFactory(),
+				metadataResourceConverter(), resourcesVersion);
 	}
 
 	// reportAutostart Process
