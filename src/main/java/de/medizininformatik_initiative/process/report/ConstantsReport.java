@@ -61,6 +61,8 @@ public interface ConstantsReport
 	String CODESYSTEM_REPORT_STATUS_VALUE_RECEIVE_ERROR = "receive-error";
 	String CODESYSTEM_REPORT_STATUS_VALUE_DRY_RUN = "dry-run";
 
+	String VALUESET_REPORT_STATUS_SEND = "http://medizininformatik-initiative.de/fhir/ValueSet/report-status-send";
+
 	String NAMINGSYSTEM_CDS_REPORT_IDENTIFIER = "http://medizininformatik-initiative.de/sid/cds-report-identifier";
 	String NAMINGSYSTEM_SEARCH_BUNDLE_IDENTIFIER = "http://medizininformatik-initiative.de/sid/search-bundle-identifier";
 	String NAMINGSYSTEM_SEARCH_BUNDLE_IDENTIFIER_VALUE_PREFIX = "search-bundle-v";

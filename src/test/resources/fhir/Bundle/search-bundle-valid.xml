@@ -1,7 +1,7 @@
 <Bundle xmlns='http://hl7.org/fhir'>
 	<meta>
 		<versionId value='1'/>
-		<lastUpdated value='2024-06-21T13:26:59.772030+02:00'/>
+		<lastUpdated value='2025-09-10T12:58:56.906367+02:00'/>
 		<profile value='http://medizininformatik-initiative.de/fhir/Bundle/search-bundle-report|1.2'/>
 		<tag>
 			<system value='http://dsf.dev/fhir/CodeSystem/read-access-tag'/>
@@ -58,7 +58,7 @@
 	<entry>
 		<request>
 			<method value='GET'/>
-			<url value='Observation?code=http://loinc.org|&amp;_profile:below=https://www.medizininformatik-initiative.de/fhir/core/modul-labor/StructureDefinition/ObservationLa&amp;_summary=count'/>
+			<url value='Observation?code=http://loinc.org|&amp;_profile:below=https://www.medizininformatik-initiative.de/fhir/core/modul-labor/StructureDefinition/ObservationLab&amp;_summary=count'/>
 		</request>
 	</entry>
 	<entry>
@@ -250,48 +250,6 @@
 	<entry>
 		<request>
 			<method value='GET'/>
-			<url value='Procedure?_profile:below=https://www.medizininformatik-initiative.de/fhir/ext/modul-icu/StructureDefinition/extrakorporales-verfahren&amp;_summary=count'/>
-		</request>
-	</entry>
-	<entry>
-		<request>
-			<method value='GET'/>
-			<url value='Procedure?_profile:below=https://www.medizininformatik-initiative.de/fhir/ext/modul-icu/StructureDefinition/beatmung&amp;_summary=count'/>
-		</request>
-	</entry>
-	<entry>
-		<request>
-			<method value='GET'/>
-			<url value='Observation?_profile:below=https://www.medizininformatik-initiative.de/fhir/ext/modul-icu/StructureDefinition/monitoring-und-vitaldaten&amp;_summary=count'/>
-		</request>
-	</entry>
-	<entry>
-		<request>
-			<method value='GET'/>
-			<url value='Observation?_profile:below=https://www.medizininformatik-initiative.de/fhir/ext/modul-icu/StructureDefinition/blutdruck&amp;_summary=count'/>
-		</request>
-	</entry>
-	<entry>
-		<request>
-			<method value='GET'/>
-			<url value='Observation?_profile:below=https://www.medizininformatik-initiative.de/fhir/ext/modul-icu/StructureDefinition/Koerpertemperatur_Generisch&amp;_summary=count'/>
-		</request>
-	</entry>
-	<entry>
-		<request>
-			<method value='GET'/>
-			<url value='Observation?_profile:below=https://www.medizininformatik-initiative.de/fhir/ext/modul-icu/StructureDefinition/sauerstoffsaettigung-im-arteriellen-blut-durch-pulsoxymetrie&amp;_summary=count'/>
-		</request>
-	</entry>
-	<entry>
-		<request>
-			<method value='GET'/>
-			<url value='Observation?_profile:below=https://www.medizininformatik-initiative.de/fhir/ext/modul-icu/StructureDefinition/herzfrequenz&amp;_summary=count'/>
-		</request>
-	</entry>
-	<entry>
-		<request>
-			<method value='GET'/>
 			<url value='ServiceRequest?_profile:below=https://www.medizininformatik-initiative.de/fhir/ext/modul-molgen/StructureDefinition/anforderung-genetischer-test&amp;_summary=count'/>
 		</request>
 	</entry>
@@ -478,151 +436,295 @@
 	<entry>
 		<request>
 			<method value='GET'/>
-			<url value='Encounter?date=eq2000&amp;_summary=count'/>
+			<url value='DiagnosticReport?_profile:below=https://www.medizininformatik-initiative.de/fhir/ext/modul-bildgebung/StructureDefinition/mii-pr-bildgebung-radiologischer-befund&amp;_summary=count'/>
 		</request>
 	</entry>
 	<entry>
 		<request>
 			<method value='GET'/>
-			<url value='Encounter?date=eq2001&amp;_summary=count'/>
+			<url value='ImagingStudy?_profile:below=https://www.medizininformatik-initiative.de/fhir/ext/modul-bildgebung/StructureDefinition/mii-pr-bildgebung-bildgebungsstudie&amp;_summary=count'/>
 		</request>
 	</entry>
 	<entry>
 		<request>
 			<method value='GET'/>
-			<url value='Encounter?date=eq2002&amp;_summary=count'/>
+			<url value='Procedure?_profile:below=https://www.medizininformatik-initiative.de/fhir/ext/modul-icu/StructureDefinition/extrakorporales-verfahren&amp;_summary=count'/>
 		</request>
 	</entry>
 	<entry>
 		<request>
 			<method value='GET'/>
-			<url value='Encounter?date=eq2003&amp;_summary=count'/>
+			<url value='Procedure?_profile:below=https://www.medizininformatik-initiative.de/fhir/ext/modul-icu/StructureDefinition/beatmung&amp;_summary=count'/>
 		</request>
 	</entry>
 	<entry>
 		<request>
 			<method value='GET'/>
-			<url value='Encounter?date=eq2004&amp;_summary=count'/>
+			<url value='Observation?_profile:below=https://gematik.de/fhir/isik/StructureDefinition/sd-mii-icu-monitoring-und-vitaldaten&amp;_summary=count'/>
 		</request>
 	</entry>
 	<entry>
 		<request>
 			<method value='GET'/>
-			<url value='Encounter?date=eq2005&amp;_summary=count'/>
+			<url value='Observation?_profile:below=https://www.medizininformatik-initiative.de/fhir/ext/modul-icu/StructureDefinition/blutdruck&amp;_summary=count'/>
 		</request>
 	</entry>
 	<entry>
 		<request>
 			<method value='GET'/>
-			<url value='Encounter?date=eq2006&amp;_summary=count'/>
+			<url value='Observation?_profile:below=https://gematik.de/fhir/isik/StructureDefinition/sd-mii-icu-koerpertemperatur-generisch&amp;_summary=count'/>
 		</request>
 	</entry>
 	<entry>
 		<request>
 			<method value='GET'/>
-			<url value='Encounter?date=eq2007&amp;_summary=count'/>
+			<url value='Observation?_profile:below=https://gematik.de/fhir/isik/StructureDefinition/sd-mii-icu-o2saettigung-im-arteriellen-blut-durch-pulsoxymetrie&amp;_summary=count'/>
 		</request>
 	</entry>
 	<entry>
 		<request>
 			<method value='GET'/>
-			<url value='Encounter?date=eq2008&amp;_summary=count'/>
+			<url value='Observation?_profile:below=https://www.medizininformatik-initiative.de/fhir/ext/modul-icu/StructureDefinition/herzfrequenz&amp;_summary=count'/>
 		</request>
 	</entry>
 	<entry>
 		<request>
 			<method value='GET'/>
-			<url value='Encounter?date=eq2009&amp;_summary=count'/>
+			<url value='Observation?_profile:below=https://www.medizininformatik-initiative.de/fhir/ext/modul-icu/StructureDefinition/atemfrequenz&amp;_summary=count'/>
 		</request>
 	</entry>
 	<entry>
 		<request>
 			<method value='GET'/>
-			<url value='Encounter?date=eq2010&amp;_summary=count'/>
+			<url value='Observation?_profile:below=https://www.medizininformatik-initiative.de/fhir/ext/modul-icu/StructureDefinition/koerpergewicht&amp;_summary=count'/>
 		</request>
 	</entry>
 	<entry>
 		<request>
 			<method value='GET'/>
-			<url value='Encounter?date=eq2011&amp;_summary=count'/>
+			<url value='Observation?_profile:below=https://www.medizininformatik-initiative.de/fhir/ext/modul-icu/StructureDefinition/koerpergroesse&amp;_summary=count'/>
 		</request>
 	</entry>
 	<entry>
 		<request>
 			<method value='GET'/>
-			<url value='Encounter?date=eq2012&amp;_summary=count'/>
+			<url value='Observation?_profile:below=https://www.medizininformatik-initiative.de/fhir/ext/modul-icu/StructureDefinition/arterieller-blutdruck&amp;_summary=count'/>
 		</request>
 	</entry>
 	<entry>
 		<request>
 			<method value='GET'/>
-			<url value='Encounter?date=eq2013&amp;_summary=count'/>
+			<url value='ResearchStudy?_profile:below=https://www.medizininformatik-initiative.de/fhir/modul-studie/StructureDefinition/mii-pr-studie-studie&amp;_summary=count'/>
 		</request>
 	</entry>
 	<entry>
 		<request>
 			<method value='GET'/>
-			<url value='Encounter?date=eq2014&amp;_summary=count'/>
+			<url value='DiagnosticReport?_profile:below=https://www.medizininformatik-initiative.de/fhir/modul-mikrobio/StructureDefinition/mii-pr-mikrobio-diagnostic-report&amp;_summary=count'/>
 		</request>
 	</entry>
 	<entry>
 		<request>
 			<method value='GET'/>
-			<url value='Encounter?date=eq2015&amp;_summary=count'/>
+			<url value='Observation?_profile:below=https://www.medizininformatik-initiative.de/fhir/modul-mikrobio/StructureDefinition/mii-pr-mikrobio-kultur-nachweis&amp;_summary=count'/>
 		</request>
 	</entry>
 	<entry>
 		<request>
 			<method value='GET'/>
-			<url value='Encounter?date=eq2016&amp;_summary=count'/>
+			<url value='Observation?_profile:below=https://www.medizininformatik-initiative.de/fhir/modul-mikrobio/StructureDefinition/mii-pr-mikrobio-empfindlichkeit&amp;_summary=count'/>
 		</request>
 	</entry>
 	<entry>
 		<request>
 			<method value='GET'/>
-			<url value='Encounter?date=eq2017&amp;_summary=count'/>
+			<url value='Condition?_profile:below=https://www.medizininformatik-initiative.de/fhir/ext/modul-onko/StructureDefinition/mii-pr-onko-diagnose-primaertumor&amp;_summary=count'/>
 		</request>
 	</entry>
 	<entry>
 		<request>
 			<method value='GET'/>
-			<url value='Encounter?date=eq2018&amp;_summary=count'/>
+			<url value='Observation?_profile:below=https://www.medizininformatik-initiative.de/fhir/ext/modul-onko/StructureDefinition/mii-pr-onko-grading&amp;_summary=count'/>
 		</request>
 	</entry>
 	<entry>
 		<request>
 			<method value='GET'/>
-			<url value='Encounter?date=eq2019&amp;_summary=count'/>
+			<url value='Observation?_profile:below=https://www.medizininformatik-initiative.de/fhir/ext/modul-onko/StructureDefinition/mii-pr-onko-tnm-t-kategorie&amp;_summary=count'/>
 		</request>
 	</entry>
 	<entry>
 		<request>
 			<method value='GET'/>
-			<url value='Encounter?date=eq2020&amp;_summary=count'/>
+			<url value='Observation?_profile:below=https://www.medizininformatik-initiative.de/fhir/ext/modul-onko/StructureDefinition/mii-pr-onko-tnm-n-kategorie&amp;_summary=count'/>
 		</request>
 	</entry>
 	<entry>
 		<request>
 			<method value='GET'/>
-			<url value='Encounter?date=eq2021&amp;_summary=count'/>
+			<url value='Observation?_profile:below=https://www.medizininformatik-initiative.de/fhir/ext/modul-onko/StructureDefinition/mii-pr-onko-tnm-m-kategorie&amp;_summary=count'/>
 		</request>
 	</entry>
 	<entry>
 		<request>
 			<method value='GET'/>
-			<url value='Encounter?date=eq2022&amp;_summary=count'/>
+			<url value='Observation?_profile:below=https://www.medizininformatik-initiative.de/fhir/ext/modul-onko/StructureDefinition/mii-pr-onko-fernmetastasen&amp;_summary=count'/>
 		</request>
 	</entry>
 	<entry>
 		<request>
 			<method value='GET'/>
-			<url value='Encounter?date=eq2023&amp;_summary=count'/>
+			<url value='Encounter?date=eq2000&amp;_profile:below=https://www.medizininformatik-initiative.de/fhir/core/modul-fall/StructureDefinition/KontaktGesundheitseinrichtung&amp;type=http://fhir.de/CodeSystem/Kontaktebene|einrichtungskontakt&amp;_summary=count'/>
 		</request>
 	</entry>
 	<entry>
 		<request>
 			<method value='GET'/>
-			<url value='Encounter?date=eq2024&amp;_summary=count'/>
+			<url value='Encounter?date=eq2001&amp;_profile:below=https://www.medizininformatik-initiative.de/fhir/core/modul-fall/StructureDefinition/KontaktGesundheitseinrichtung&amp;type=http://fhir.de/CodeSystem/Kontaktebene|einrichtungskontakt&amp;_summary=count'/>
+		</request>
+	</entry>
+	<entry>
+		<request>
+			<method value='GET'/>
+			<url value='Encounter?date=eq2002&amp;_profile:below=https://www.medizininformatik-initiative.de/fhir/core/modul-fall/StructureDefinition/KontaktGesundheitseinrichtung&amp;type=http://fhir.de/CodeSystem/Kontaktebene|einrichtungskontakt&amp;_summary=count'/>
+		</request>
+	</entry>
+	<entry>
+		<request>
+			<method value='GET'/>
+			<url value='Encounter?date=eq2003&amp;_profile:below=https://www.medizininformatik-initiative.de/fhir/core/modul-fall/StructureDefinition/KontaktGesundheitseinrichtung&amp;type=http://fhir.de/CodeSystem/Kontaktebene|einrichtungskontakt&amp;_summary=count'/>
+		</request>
+	</entry>
+	<entry>
+		<request>
+			<method value='GET'/>
+			<url value='Encounter?date=eq2004&amp;_profile:below=https://www.medizininformatik-initiative.de/fhir/core/modul-fall/StructureDefinition/KontaktGesundheitseinrichtung&amp;type=http://fhir.de/CodeSystem/Kontaktebene|einrichtungskontakt&amp;_summary=count'/>
+		</request>
+	</entry>
+	<entry>
+		<request>
+			<method value='GET'/>
+			<url value='Encounter?date=eq2005&amp;_profile:below=https://www.medizininformatik-initiative.de/fhir/core/modul-fall/StructureDefinition/KontaktGesundheitseinrichtung&amp;type=http://fhir.de/CodeSystem/Kontaktebene|einrichtungskontakt&amp;_summary=count'/>
+		</request>
+	</entry>
+	<entry>
+		<request>
+			<method value='GET'/>
+			<url value='Encounter?date=eq2006&amp;_profile:below=https://www.medizininformatik-initiative.de/fhir/core/modul-fall/StructureDefinition/KontaktGesundheitseinrichtung&amp;type=http://fhir.de/CodeSystem/Kontaktebene|einrichtungskontakt&amp;_summary=count'/>
+		</request>
+	</entry>
+	<entry>
+		<request>
+			<method value='GET'/>
+			<url value='Encounter?date=eq2007&amp;_profile:below=https://www.medizininformatik-initiative.de/fhir/core/modul-fall/StructureDefinition/KontaktGesundheitseinrichtung&amp;type=http://fhir.de/CodeSystem/Kontaktebene|einrichtungskontakt&amp;_summary=count'/>
+		</request>
+	</entry>
+	<entry>
+		<request>
+			<method value='GET'/>
+			<url value='Encounter?date=eq2008&amp;_profile:below=https://www.medizininformatik-initiative.de/fhir/core/modul-fall/StructureDefinition/KontaktGesundheitseinrichtung&amp;type=http://fhir.de/CodeSystem/Kontaktebene|einrichtungskontakt&amp;_summary=count'/>
+		</request>
+	</entry>
+	<entry>
+		<request>
+			<method value='GET'/>
+			<url value='Encounter?date=eq2009&amp;_profile:below=https://www.medizininformatik-initiative.de/fhir/core/modul-fall/StructureDefinition/KontaktGesundheitseinrichtung&amp;type=http://fhir.de/CodeSystem/Kontaktebene|einrichtungskontakt&amp;_summary=count'/>
+		</request>
+	</entry>
+	<entry>
+		<request>
+			<method value='GET'/>
+			<url value='Encounter?date=eq2010&amp;_profile:below=https://www.medizininformatik-initiative.de/fhir/core/modul-fall/StructureDefinition/KontaktGesundheitseinrichtung&amp;type=http://fhir.de/CodeSystem/Kontaktebene|einrichtungskontakt&amp;_summary=count'/>
+		</request>
+	</entry>
+	<entry>
+		<request>
+			<method value='GET'/>
+			<url value='Encounter?date=eq2011&amp;_profile:below=https://www.medizininformatik-initiative.de/fhir/core/modul-fall/StructureDefinition/KontaktGesundheitseinrichtung&amp;type=http://fhir.de/CodeSystem/Kontaktebene|einrichtungskontakt&amp;_summary=count'/>
+		</request>
+	</entry>
+	<entry>
+		<request>
+			<method value='GET'/>
+			<url value='Encounter?date=eq2012&amp;_profile:below=https://www.medizininformatik-initiative.de/fhir/core/modul-fall/StructureDefinition/KontaktGesundheitseinrichtung&amp;type=http://fhir.de/CodeSystem/Kontaktebene|einrichtungskontakt&amp;_summary=count'/>
+		</request>
+	</entry>
+	<entry>
+		<request>
+			<method value='GET'/>
+			<url value='Encounter?date=eq2013&amp;_profile:below=https://www.medizininformatik-initiative.de/fhir/core/modul-fall/StructureDefinition/KontaktGesundheitseinrichtung&amp;type=http://fhir.de/CodeSystem/Kontaktebene|einrichtungskontakt&amp;_summary=count'/>
+		</request>
+	</entry>
+	<entry>
+		<request>
+			<method value='GET'/>
+			<url value='Encounter?date=eq2014&amp;_profile:below=https://www.medizininformatik-initiative.de/fhir/core/modul-fall/StructureDefinition/KontaktGesundheitseinrichtung&amp;type=http://fhir.de/CodeSystem/Kontaktebene|einrichtungskontakt&amp;_summary=count'/>
+		</request>
+	</entry>
+	<entry>
+		<request>
+			<method value='GET'/>
+			<url value='Encounter?date=eq2015&amp;_profile:below=https://www.medizininformatik-initiative.de/fhir/core/modul-fall/StructureDefinition/KontaktGesundheitseinrichtung&amp;type=http://fhir.de/CodeSystem/Kontaktebene|einrichtungskontakt&amp;_summary=count'/>
+		</request>
+	</entry>
+	<entry>
+		<request>
+			<method value='GET'/>
+			<url value='Encounter?date=eq2016&amp;_profile:below=https://www.medizininformatik-initiative.de/fhir/core/modul-fall/StructureDefinition/KontaktGesundheitseinrichtung&amp;type=http://fhir.de/CodeSystem/Kontaktebene|einrichtungskontakt&amp;_summary=count'/>
+		</request>
+	</entry>
+	<entry>
+		<request>
+			<method value='GET'/>
+			<url value='Encounter?date=eq2017&amp;_profile:below=https://www.medizininformatik-initiative.de/fhir/core/modul-fall/StructureDefinition/KontaktGesundheitseinrichtung&amp;type=http://fhir.de/CodeSystem/Kontaktebene|einrichtungskontakt&amp;_summary=count'/>
+		</request>
+	</entry>
+	<entry>
+		<request>
+			<method value='GET'/>
+			<url value='Encounter?date=eq2018&amp;_profile:below=https://www.medizininformatik-initiative.de/fhir/core/modul-fall/StructureDefinition/KontaktGesundheitseinrichtung&amp;type=http://fhir.de/CodeSystem/Kontaktebene|einrichtungskontakt&amp;_summary=count'/>
+		</request>
+	</entry>
+	<entry>
+		<request>
+			<method value='GET'/>
+			<url value='Encounter?date=eq2019&amp;_profile:below=https://www.medizininformatik-initiative.de/fhir/core/modul-fall/StructureDefinition/KontaktGesundheitseinrichtung&amp;type=http://fhir.de/CodeSystem/Kontaktebene|einrichtungskontakt&amp;_summary=count'/>
+		</request>
+	</entry>
+	<entry>
+		<request>
+			<method value='GET'/>
+			<url value='Encounter?date=eq2020&amp;_profile:below=https://www.medizininformatik-initiative.de/fhir/core/modul-fall/StructureDefinition/KontaktGesundheitseinrichtung&amp;type=http://fhir.de/CodeSystem/Kontaktebene|einrichtungskontakt&amp;_summary=count'/>
+		</request>
+	</entry>
+	<entry>
+		<request>
+			<method value='GET'/>
+			<url value='Encounter?date=eq2021&amp;_profile:below=https://www.medizininformatik-initiative.de/fhir/core/modul-fall/StructureDefinition/KontaktGesundheitseinrichtung&amp;type=http://fhir.de/CodeSystem/Kontaktebene|einrichtungskontakt&amp;_summary=count'/>
+		</request>
+	</entry>
+	<entry>
+		<request>
+			<method value='GET'/>
+			<url value='Encounter?date=eq2022&amp;_profile:below=https://www.medizininformatik-initiative.de/fhir/core/modul-fall/StructureDefinition/KontaktGesundheitseinrichtung&amp;type=http://fhir.de/CodeSystem/Kontaktebene|einrichtungskontakt&amp;_summary=count'/>
+		</request>
+	</entry>
+	<entry>
+		<request>
+			<method value='GET'/>
+			<url value='Encounter?date=eq2023&amp;_profile:below=https://www.medizininformatik-initiative.de/fhir/core/modul-fall/StructureDefinition/KontaktGesundheitseinrichtung&amp;type=http://fhir.de/CodeSystem/Kontaktebene|einrichtungskontakt&amp;_summary=count'/>
+		</request>
+	</entry>
+	<entry>
+		<request>
+			<method value='GET'/>
+			<url value='Encounter?date=eq2024&amp;_profile:below=https://www.medizininformatik-initiative.de/fhir/core/modul-fall/StructureDefinition/KontaktGesundheitseinrichtung&amp;type=http://fhir.de/CodeSystem/Kontaktebene|einrichtungskontakt&amp;_summary=count'/>
+		</request>
+	</entry>
+	<entry>
+		<request>
+			<method value='GET'/>
+			<url value='Encounter?date=eq2025&amp;_profile:below=https://www.medizininformatik-initiative.de/fhir/core/modul-fall/StructureDefinition/KontaktGesundheitseinrichtung&amp;type=http://fhir.de/CodeSystem/Kontaktebene|einrichtungskontakt&amp;_summary=count'/>
 		</request>
 	</entry>
 	<entry>

@@ -6,12 +6,14 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import org.hl7.fhir.r4.model.BooleanType;
 import org.hl7.fhir.r4.model.Bundle;
 import org.hl7.fhir.r4.model.CodeSystem;
 import org.hl7.fhir.r4.model.Resource;
 import org.hl7.fhir.r4.model.Task;
+import org.hl7.fhir.r4.model.ValueSet;
 import org.springframework.beans.factory.InitializingBean;
 
 import de.medizininformatik_initiative.processes.common.fhir.client.FhirClientFactory;
@@ -58,9 +60,18 @@ public class ReportProcessPluginDeploymentStateListener
 				ConstantsReport.CODESYSTEM_REPORT, CodeSystem.class, this::filterCodeSystemsWithNonMatchingConceptCodes,
 				this::adaptCodeSystemsReplacingConcepts);
 
+		metadataResourceConverter.searchAndConvertOlderResourcesIfCurrentIsNewestResource(
+				ConstantsReport.CODESYSTEM_REPORT_STATUS, CodeSystem.class,
+				this::filterCodeSystemsWithNonMatchingConceptCodes, this::adaptCodeSystemsReplacingConcepts);
+
 		if (activeProcesses.contains(ConstantsReport.PROCESS_NAME_FULL_REPORT_SEND))
 		{
+			metadataResourceConverter.searchAndConvertOlderResourcesIfCurrentIsNewestResource(
+					ConstantsReport.VALUESET_REPORT_STATUS_SEND, ValueSet.class,
+					this::filterValueSetsWithNonMatchingConceptCodes, this::adaptValueSetsReplacingConcepts);
+
 			updateDraftTaskReportSendStart();
+
 			fhirClientFactory.testConnection();
 		}
 	}
@@ -71,15 +82,37 @@ public class ReportProcessPluginDeploymentStateListener
 		updateResource(olderResource);
 	}
 
-	private boolean filterCodeSystemsWithNonMatchingConceptCodes(CodeSystem currentCodeSystem,
-			CodeSystem olderCodeSystem)
+	private boolean filterCodeSystemsWithNonMatchingConceptCodes(CodeSystem currentResource, CodeSystem olderResource)
 	{
-		return !getConceptCodes(currentCodeSystem).equals(getConceptCodes(olderCodeSystem));
+		return !getConceptCodes(currentResource).equals(getConceptCodes(olderResource));
 	}
 
-	private Set<String> getConceptCodes(CodeSystem codeSystem)
+	private Set<String> getConceptCodes(CodeSystem resource)
 	{
-		return codeSystem.getConcept().stream().map(CodeSystem.ConceptDefinitionComponent::getCode)
+		return resource.getConcept().stream().map(CodeSystem.ConceptDefinitionComponent::getCode)
+				.collect(Collectors.toSet());
+	}
+
+	private void adaptValueSetsReplacingConcepts(ValueSet currentResource, ValueSet olderResource)
+	{
+		olderResource.getCompose().setInclude(currentResource.getCompose().getInclude());
+		olderResource.getCompose().getInclude().forEach(include -> include.setVersion(olderResource.getVersion()));
+		updateResource(olderResource);
+	}
+
+	private boolean filterValueSetsWithNonMatchingConceptCodes(ValueSet currentResource, ValueSet olderResource)
+	{
+		return !getConceptCodes(currentResource).equals(getConceptCodes(olderResource));
+	}
+
+	private Set<String> getConceptCodes(ValueSet resource)
+	{
+		ValueSet.ValueSetComposeComponent compose = resource.getCompose();
+		return Stream.concat(
+				compose.getInclude().stream().flatMap(c -> c.getConcept().stream())
+						.map(ValueSet.ConceptReferenceComponent::getCode),
+				compose.getExclude().stream().flatMap(c -> c.getConcept().stream())
+						.map(ValueSet.ConceptReferenceComponent::getCode))
 				.collect(Collectors.toSet());
 	}
 
