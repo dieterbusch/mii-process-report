@@ -2,7 +2,7 @@
 	<meta>
 		<versionId value="1"/>
 		<lastUpdated value="2022-11-16T10:00:00.000+01:00"/>
-		<profile value="http://medizininformatik-initiative.de/fhir/Bundle/search-bundle-response-bundle|1.0"></profile>
+		<profile value="http://medizininformatik-initiative.de/fhir/Bundle/search-bundle-response-report|1.2"></profile>
 		<tag>
 			<system value="http://dsf.dev/fhir/CodeSystem/read-access-tag"></system>
 			<code value="LOCAL"></code>

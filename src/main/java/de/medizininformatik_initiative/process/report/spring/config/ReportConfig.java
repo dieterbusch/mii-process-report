@@ -18,11 +18,14 @@ import de.medizininformatik_initiative.process.report.service.DownloadReport;
 import de.medizininformatik_initiative.process.report.service.DownloadSearchBundle;
 import de.medizininformatik_initiative.process.report.service.HandleError;
 import de.medizininformatik_initiative.process.report.service.InsertReport;
+import de.medizininformatik_initiative.process.report.service.LogDryRun;
 import de.medizininformatik_initiative.process.report.service.SelectTargetDic;
 import de.medizininformatik_initiative.process.report.service.SelectTargetHrp;
 import de.medizininformatik_initiative.process.report.service.SetTimer;
 import de.medizininformatik_initiative.process.report.service.StoreReceipt;
 import de.medizininformatik_initiative.process.report.util.ReportStatusGenerator;
+import de.medizininformatik_initiative.process.report.util.SearchQueryCheckService;
+import de.medizininformatik_initiative.processes.common.util.MetadataResourceConverter;
 import dev.dsf.bpe.v1.ProcessPluginApi;
 import dev.dsf.bpe.v1.ProcessPluginDeploymentStateListener;
 import dev.dsf.bpe.v1.documentation.ProcessDocumentation;
@@ -41,6 +44,11 @@ public class ReportConfig
 	@Value("${de.medizininformatik.initiative.report.dic.hrp.identifier:#{null}}")
 	private String hrpIdentifier;
 
+	@ProcessDocumentation(processNames = {
+			"medizininformatik-initiativede_reportSend" }, description = "To enable asynchronous request pattern when executing search bundle requests set to `true`")
+	@Value("${de.medizininformatik.initiative.report.dic.fhir.server.async.enabled:false}")
+	private boolean fhirAsyncEnabled;
+
 	// all Processes
 
 	@Bean
@@ -51,10 +59,20 @@ public class ReportConfig
 	}
 
 	@Bean
-	@Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
+	@Scope(ConfigurableBeanFactory.SCOPE_SINGLETON)
+	public MetadataResourceConverter metadataResourceConverter()
+	{
+		String resourcesVersion = new ReportProcessPluginDefinition().getResourceVersion();
+		return new MetadataResourceConverter(api, resourcesVersion);
+	}
+
+	@Bean
+	@Scope(ConfigurableBeanFactory.SCOPE_SINGLETON)
 	public ProcessPluginDeploymentStateListener reportProcessPluginDeploymentStateListener()
 	{
-		return new ReportProcessPluginDeploymentStateListener(fhirClientConfig.fhirClientFactory());
+		String resourcesVersion = new ReportProcessPluginDefinition().getResourceVersion();
+		return new ReportProcessPluginDeploymentStateListener(api, fhirClientConfig.fhirClientFactory(),
+				metadataResourceConverter(), resourcesVersion);
 	}
 
 	// reportAutostart Process
@@ -94,7 +112,14 @@ public class ReportConfig
 	@Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
 	public CheckSearchBundle checkSearchBundle()
 	{
-		return new CheckSearchBundle(api);
+		return new CheckSearchBundle(api, searchQueryCheckService());
+	}
+
+	@Bean
+	@Scope(ConfigurableBeanFactory.SCOPE_SINGLETON)
+	public SearchQueryCheckService searchQueryCheckService()
+	{
+		return new SearchQueryCheckService();
 	}
 
 	@Bean
@@ -102,8 +127,15 @@ public class ReportConfig
 	public CreateReport createReport()
 	{
 		String resourceVersion = new ReportProcessPluginDefinition().getResourceVersion();
-		return new CreateReport(api, resourceVersion, fhirClientConfig.fhirClientFactory(),
+		return new CreateReport(api, resourceVersion, fhirClientConfig.fhirClientFactory(), fhirAsyncEnabled,
 				fhirClientConfig.dataLogger());
+	}
+
+	@Bean
+	@Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
+	public LogDryRun logDryRun()
+	{
+		return new LogDryRun(api, reportStatusGenerator());
 	}
 
 	@Bean

@@ -28,7 +28,7 @@
 		<element id="Bundle.identifier.system">
 			<path value="Bundle.identifier.system" />
 			<min value="1" />
-			<fixedUri value="http://medizininformatik-initiative.de/fhir/CodeSystem/report" />
+			<fixedUri value="http://medizininformatik-initiative.de/sid/search-bundle-identifier" />
 		</element>
 		<element id="Bundle.identifier.value">
 			<path value="Bundle.identifier.value" />

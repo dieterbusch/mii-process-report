@@ -2,21 +2,21 @@
 	<meta>
 		<versionId value='1'/>
 		<lastUpdated value='2024-02-16T10:26:16.866844+01:00'/>
-		<profile value='http://medizininformatik-initiative.de/fhir/Bundle/search-bundle-report|1.0'/>
+		<profile value='http://medizininformatik-initiative.de/fhir/Bundle/search-bundle-report|1.1'/>
 		<tag>
 			<system value='http://dsf.dev/fhir/CodeSystem/read-access-tag'/>
 			<code value='ALL'/>
 		</tag>
 	</meta>
 	<identifier>
-		<system value='http://medizininformatik-initiative.de/fhir/CodeSystem/report'/>
+		<system value='http://medizininformatik-initiative.de/sid/search-bundle-identifier'/>
 		<value value='search-bundle-v1.1'/>
 	</identifier>
 	<type value='batch'/>
 	<entry>
 		<request>
 			<method value='GET'/>
-			<url value='Medication?ingredient-code=http://fhir.de/CodeSystem/ask|M01AE01&amp;_profile=https://www.medizininformatik-initiative.de/fhir/core/modul-medikation/StructureDefinition/Medication&amp;_summary=count'/>
+			<url value='Condition?code=http://fhir.de/CodeSystem/bfarm/icd-10-gm|R51&amp;_profile=https://www.medizininformatik-initiative.de/fhir/core/modul-diagnose/StructureDefinition/Diagnose&amp;_summary=count'/>
 		</request>
 	</entry>
 	<entry>

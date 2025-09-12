@@ -26,10 +26,23 @@
 		<display value="Report Status" />
 		<definition value="Report status of local organization" />
 	</concept>
+	<!--
+		TODO: search-bundle-v1.0 added for backwards compatibility, because CodeSystems with different versions cannot
+		      be used in DSF API 1.x. Remove for DSF API 2.x where CodeSystem versioning is fixed.
+	-->
 	<concept>
-		<code value="search-bundle-v#{version}" />
-		<display value="Search Bundle v#{version}" />
-		<definition value="Search Bundle on which the report is based in version #{version}" />
+		<code value="search-bundle-v1.0" />
+		<display value="Search Bundle v1.0" />
+		<definition value="Search Bundle on which the report is based in version 1.0 (only used in process version 1.0)" />
+	</concept>
+	<!--
+		TODO: search-bundle-v1.1 added for backwards compatibility, because CodeSystems with different versions cannot
+		      be used in DSF API 1.x. Remove for DSF API 2.x where CodeSystem versioning is fixed.
+	-->
+	<concept>
+		<code value="search-bundle-v1.1" />
+		<display value="Search Bundle v1.1" />
+		<definition value="Search Bundle on which the report is based in version 1.1 (only used in process version 1.1)" />
 	</concept>
 	<concept>
 		<code value="search-bundle-response-reference" />
@@ -50,5 +63,10 @@
 		<code value="hrp-identifier" />
 		<display value="HRP Identifier" />
 		<definition value="Identifier of the HRP where the report should be sent" />
+	</concept>
+	<concept>
+		<code value="dry-run" />
+		<display value="Dry-Run" />
+		<definition value="Report created as dry-run and not sent to HRP" />
 	</concept>
 </CodeSystem> 

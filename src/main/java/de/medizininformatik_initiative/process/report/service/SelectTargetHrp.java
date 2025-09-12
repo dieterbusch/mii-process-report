@@ -5,6 +5,7 @@ import java.util.Optional;
 import java.util.function.Supplier;
 
 import org.camunda.bpm.engine.delegate.DelegateExecution;
+import org.hl7.fhir.r4.model.BooleanType;
 import org.hl7.fhir.r4.model.Coding;
 import org.hl7.fhir.r4.model.Endpoint;
 import org.hl7.fhir.r4.model.Identifier;
@@ -56,6 +57,12 @@ public class SelectTargetHrp extends AbstractServiceDelegate
 
 		Target target = variables.createTarget(hrpIdentifier, endpointIdentifier, endpoint.getAddress());
 		variables.setTarget(target);
+
+		boolean isDryRun = isDryRun(variables);
+		if (isDryRun)
+			logger.info("Creating new report as dry-run for HRP '{}'", hrpIdentifier);
+
+		variables.setBoolean(ConstantsReport.BPMN_EXECUTION_VARIABLE_IS_DRY_RUN, isDryRun);
 	}
 
 	private Optional<String> extractHrpIdentifierFromTask(Task task)
@@ -136,4 +143,13 @@ public class SelectTargetHrp extends AbstractServiceDelegate
 				.orElseThrow(() -> new RuntimeException("Endpoint with id '" + endpoint.getId()
 						+ "' is missing identifier with system '" + NamingSystems.EndpointIdentifier.SID + "'"));
 	}
+
+	private boolean isDryRun(Variables variables)
+	{
+		return api.getTaskHelper()
+				.getFirstInputParameterValue(variables.getStartTask(), ConstantsReport.CODESYSTEM_REPORT,
+						ConstantsReport.CODESYSTEM_REPORT_VALUE_DRY_RUN, BooleanType.class)
+				.map(BooleanType::booleanValue).orElse(false);
+	}
+
 }
