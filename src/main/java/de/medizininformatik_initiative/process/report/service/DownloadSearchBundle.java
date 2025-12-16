@@ -55,10 +55,12 @@ public class DownloadSearchBundle extends AbstractServiceDelegate implements Ini
 	@Override
 	protected void doExecute(DelegateExecution execution, Variables variables)
 	{
+		logger.info("DownloadSearchBundle doExecute");
+
 		Task task = variables.getStartTask();
 		Target target = variables.getTarget();
-		String searchBundleIdentifier = ConstantsReport.CODESYSTEM_REPORT + "|"
-				+ ConstantsReport.CODESYSTEM_REPORT_VALUE_SEARCH_BUNDLE + processVersion;
+		String searchBundleIdentifier = ConstantsReport.NAMINGSYSTEM_SEARCH_BUNDLE_IDENTIFIER + "|"
+				+ ConstantsReport.NAMINGSYSTEM_SEARCH_BUNDLE_IDENTIFIER_VALUE_PREFIX + processVersion;
 
 		logger.info("Downloading search Bundle '{}' from HRP '{}' for Task with id '{}'", searchBundleIdentifier,
 				target.getOrganizationIdentifierValue(), task.getId());

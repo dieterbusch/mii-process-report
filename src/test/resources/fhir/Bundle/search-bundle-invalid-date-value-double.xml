@@ -10,8 +10,8 @@
 	</meta>
 	<type value="batch"/>
 	<identifier>
-		<system value="http://medizininformatik-initiative.de/fhir/CodeSystem/report"/>
-		<value value="search-bundle"/>
+		<system value="http://medizininformatik-initiative.de/sid/search-bundle-identifier"/>
+		<value value="search-bundle-v1.0"/>
 	</identifier>
 	<entry>
 		<request>

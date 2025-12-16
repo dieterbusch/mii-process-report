@@ -29,6 +29,8 @@ public class SetTimer extends AbstractServiceDelegate
 	@Override
 	protected void doExecute(DelegateExecution execution, Variables variables)
 	{
+		logger.info("SetTimer doExecute");
+
 		Task task = variables.getStartTask();
 
 		String timerInterval = getTimerInterval(variables);

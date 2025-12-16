@@ -39,15 +39,17 @@ public class CreateReport extends AbstractServiceDelegate implements Initializin
 
 	private final String resourceVersion;
 	private final FhirClientFactory fhirClientFactory;
+	private final boolean fhirAsyncRequestsEnabled;
 	private final DataLogger dataLogger;
 
 	public CreateReport(ProcessPluginApi api, String resourceVersion, FhirClientFactory fhirClientFactory,
-			DataLogger dataLogger)
+			boolean fhirAsyncRequestsEnabled, DataLogger dataLogger)
 	{
 		super(api);
 
 		this.resourceVersion = resourceVersion;
 		this.fhirClientFactory = fhirClientFactory;
+		this.fhirAsyncRequestsEnabled = fhirAsyncRequestsEnabled;
 		this.dataLogger = dataLogger;
 	}
 
@@ -64,15 +66,18 @@ public class CreateReport extends AbstractServiceDelegate implements Initializin
 	@Override
 	protected void doExecute(DelegateExecution execution, Variables variables)
 	{
+		logger.info("CreateReport doExecute");
+
 		Task task = variables.getStartTask();
 		Bundle searchBundle = variables.getResource(ConstantsReport.BPMN_EXECUTION_VARIABLE_REPORT_SEARCH_BUNDLE);
 		Target target = variables.getTarget();
+		boolean isDryRun = variables.getBoolean(ConstantsReport.BPMN_EXECUTION_VARIABLE_IS_DRY_RUN);
 
 		try
 		{
 			Bundle responseBundle = executeSearchBundle(searchBundle, target.getOrganizationIdentifierValue());
 
-			Bundle reportBundle = transformToReportBundle(searchBundle, responseBundle, target);
+			Bundle reportBundle = transformToReportBundle(searchBundle, responseBundle, target, isDryRun);
 			dataLogger.logResource("Report Bundle", reportBundle);
 
 			checkReportBundle(searchBundle, reportBundle, target.getOrganizationIdentifierValue());
@@ -94,8 +99,8 @@ public class CreateReport extends AbstractServiceDelegate implements Initializin
 	private Bundle executeSearchBundle(Bundle searchBundle, String hrpIdentifier)
 	{
 		logger.info(
-				"Executing search Bundle from HRP '{}' against FHIR store with base url '{}' - this could take a while...",
-				hrpIdentifier, fhirClientFactory.getFhirClient().getFhirBaseUrl());
+				"Executing search Bundle from HRP '{}' against FHIR store with base URL '{}' - this could take a while...",
+				hrpIdentifier, fhirClientFactory.getFhirBaseUrl());
 
 		Bundle responseBundle = new Bundle();
 		responseBundle.setType(Bundle.BundleType.BATCHRESPONSE);
@@ -115,9 +120,10 @@ public class CreateReport extends AbstractServiceDelegate implements Initializin
 
 		try
 		{
-			logger.debug("Executing report search request '{}'", url);
+			logger.debug("Executing report search request '{}' with {}", url,
+					fhirAsyncRequestsEnabled ? "async request pattern" : "normal request pattern");
+			Resource result = doExecuteRequest(url);
 
-			Resource result = fhirClientFactory.getFhirClient().search(url);
 			entry.setResource(result);
 			entry.setResponse(new Bundle.BundleEntryResponseComponent().setStatus(RESPONSE_OK));
 		}
@@ -137,7 +143,15 @@ public class CreateReport extends AbstractServiceDelegate implements Initializin
 		return entry;
 	}
 
-	private Bundle transformToReportBundle(Bundle searchBundle, Bundle responseBundle, Target target)
+	private Resource doExecuteRequest(String url)
+	{
+		if (fhirAsyncRequestsEnabled)
+			return fhirClientFactory.getAsyncFhirClient().search(url);
+		else
+			return fhirClientFactory.getStandardFhirClient().search(url);
+	}
+
+	private Bundle transformToReportBundle(Bundle searchBundle, Bundle responseBundle, Target target, boolean isDryRun)
 	{
 		Bundle report = new Bundle();
 		report.setMeta(responseBundle.getMeta());
@@ -150,7 +164,8 @@ public class CreateReport extends AbstractServiceDelegate implements Initializin
 						.orElseThrow(() -> new RuntimeException("LocalOrganizationIdentifierValue empty"))));
 
 		api.getReadAccessHelper().addLocal(report);
-		api.getReadAccessHelper().addOrganization(report, target.getOrganizationIdentifierValue());
+		if (!isDryRun)
+			api.getReadAccessHelper().addOrganization(report, target.getOrganizationIdentifierValue());
 
 		for (int i = 0; i < searchBundle.getEntry().size(); i++)
 		{
@@ -186,11 +201,24 @@ public class CreateReport extends AbstractServiceDelegate implements Initializin
 
 		if (responseEntry.getResource() instanceof Bundle responseEntryBundle)
 		{
+			if (fhirAsyncRequestsEnabled)
+				responseEntryBundle = flattenBundle(responseEntryBundle);
 			reportEntryBundle.setTotal(responseEntryBundle.getTotal());
 			reportEntryBundle.getMeta().setLastUpdated(responseEntryBundle.getMeta().getLastUpdated());
 		}
 
 		reportEntry.setResource(reportEntryBundle);
+	}
+
+	private Bundle flattenBundle(Bundle bundle)
+	{
+		// the structure of a async response is nested in multiple levels. Therefore this flattening is needed.
+		// see http://hl7.org/fhir/R5/async-bundle.html#3.2.6.2.4.0.3
+		if (bundle.hasEntry() && bundle.getEntryFirstRep().hasResource()
+				&& bundle.getEntryFirstRep().getResource() instanceof Bundle child)
+			return flattenBundle(child);
+		else
+			return bundle;
 	}
 
 	private void toEntryComponentCapabilityStatementResource(Bundle.BundleEntryComponent responseEntry,

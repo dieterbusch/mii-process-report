@@ -39,6 +39,8 @@ public class StoreReceipt extends AbstractServiceDelegate implements Initializin
 	@Override
 	protected void doExecute(DelegateExecution execution, Variables variables)
 	{
+		logger.info("StoreReceipt doExecute");
+
 		String reportLocation = variables
 				.getString(ConstantsReport.BPMN_EXECUTION_VARIABLE_REPORT_SEARCH_BUNDLE_RESPONSE_REFERENCE);
 

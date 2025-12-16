@@ -3,10 +3,14 @@ package de.medizininformatik_initiative.process.report.message;
 import java.util.Objects;
 import java.util.stream.Stream;
 
+import dev.dsf.fhir.client.FhirWebserviceClient;
 import org.camunda.bpm.engine.delegate.DelegateExecution;
 import org.hl7.fhir.r4.model.Coding;
+import org.hl7.fhir.r4.model.IdType;
 import org.hl7.fhir.r4.model.Task;
 import org.hl7.fhir.r4.model.Type;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
 
 import de.medizininformatik_initiative.process.report.ConstantsReport;
@@ -17,12 +21,21 @@ import dev.dsf.bpe.v1.variables.Variables;
 
 public class SendReceipt extends AbstractTaskMessageSend implements InitializingBean
 {
+	private static final Logger logger = LoggerFactory.getLogger(SendReceipt.class);
+
 	private final ReportStatusGenerator statusGenerator;
 
 	public SendReceipt(ProcessPluginApi api, ReportStatusGenerator statusGenerator)
 	{
 		super(api);
 		this.statusGenerator = statusGenerator;
+	}
+
+	@Override
+	protected IdType doSend(FhirWebserviceClient client, Task task)
+	{
+		logger.info("SendReceipt doSend");
+		return super.doSend(client, task);
 	}
 
 	@Override

@@ -43,6 +43,8 @@ public class DownloadReport extends AbstractServiceDelegate implements Initializ
 	@Override
 	protected void doExecute(DelegateExecution execution, Variables variables)
 	{
+		logger.info("DownloadReport doExecute");
+
 		Task task = variables.getStartTask();
 		IdType reportReference = getReportReference(task);
 
@@ -64,15 +66,12 @@ public class DownloadReport extends AbstractServiceDelegate implements Initializ
 					ConstantsReport.CODESYSTEM_REPORT_STATUS_VALUE_RECEIVE_ERROR, "Download report failed"));
 			variables.updateTask(task);
 
-			variables.setString(ConstantsReport.BPMN_EXECUTION_VARIABLE_REPORT_RECEIVE_ERROR_MESSAGE,
-					"Download report failed");
-
 			logger.warn(
 					"Downloading report with id '{}' from organization '{}' referenced in Task with id '{}' failed - {}",
 					reportReference.getValue(), task.getRequester().getIdentifier().getValue(), task.getId(),
 					exception.getMessage());
 			throw new BpmnError(ConstantsReport.BPMN_EXECUTION_VARIABLE_REPORT_RECEIVE_ERROR,
-					"Download report - " + exception.getMessage());
+					"Download report failed - " + exception.getMessage());
 		}
 	}
 

@@ -10,8 +10,8 @@ import dev.dsf.bpe.v1.ProcessPluginDefinition;
 
 public class ReportProcessPluginDefinition implements ProcessPluginDefinition
 {
-	public static final String VERSION = "1.1.2.0";
-	public static final LocalDate RELEASE_DATE = LocalDate.of(2024, 11, 10);
+	public static final String VERSION = "1.2.1.0";
+	public static final LocalDate RELEASE_DATE = LocalDate.of(2025, 9, 12);
 
 	@Override
 	public String getName()
@@ -55,6 +55,7 @@ public class ReportProcessPluginDefinition implements ProcessPluginDefinition
 		var eReportStatusError = "fhir/StructureDefinition/extension-report-status-error.xml";
 
 		var nReportIdent = "fhir/NamingSystem/cds-report-identifier.xml";
+		var nSearchBundleIdent = "fhir/NamingSystem/search-bundle-identifier.xml";
 
 		var sAutostartStart = "fhir/StructureDefinition/task-report-autostart-start.xml";
 		var sAutostartStop = "fhir/StructureDefinition/task-report-autostart-stop.xml";
@@ -75,10 +76,10 @@ public class ReportProcessPluginDefinition implements ProcessPluginDefinition
 		return Map.of(ConstantsReport.PROCESS_NAME_FULL_REPORT_AUTOSTART,
 				List.of(aAutostart, cReport, sAutostartStart, sAutostartStop, tAutostartStart, tAutostartStop, vReport),
 				ConstantsReport.PROCESS_NAME_FULL_REPORT_RECEIVE,
-				List.of(aReceive, cReport, cReportStatus, eReportStatusError, nReportIdent, sSearchBundle,
-						sSearchBundleResponse, sSend, vReport, vReportStatusReceive),
+				List.of(aReceive, cReport, cReportStatus, eReportStatusError, nReportIdent, nSearchBundleIdent,
+						sSearchBundle, sSearchBundleResponse, sSend, vReport, vReportStatusReceive),
 				ConstantsReport.PROCESS_NAME_FULL_REPORT_SEND,
-				List.of(aSend, cReport, cReportStatus, eReportStatusError, nReportIdent, sReceive, sSearchBundle,
-						sSearchBundleResponse, sSendStart, tSendStart, vReport, vReportStatusSend));
+				List.of(aSend, cReport, cReportStatus, eReportStatusError, nReportIdent, nSearchBundleIdent, sReceive,
+						sSearchBundle, sSearchBundleResponse, sSendStart, tSendStart, vReport, vReportStatusSend));
 	}
 }

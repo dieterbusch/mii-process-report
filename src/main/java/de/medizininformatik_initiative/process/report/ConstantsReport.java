@@ -1,6 +1,7 @@
 package de.medizininformatik_initiative.process.report;
 
 import de.medizininformatik_initiative.processes.common.util.ConstantsBase;
+import org.hl7.fhir.r4.model.Coding;
 
 public interface ConstantsReport
 {
@@ -41,15 +42,17 @@ public interface ConstantsReport
 	String BPMN_EXECUTION_VARIABLE_REPORT_SEARCH_BUNDLE_RESPONSE_REFERENCE = "reportSearchBundleResponseReference";
 	String BPMN_EXECUTION_VARIABLE_REPORT_RECEIVE_ERROR = "reportReceiveError";
 	String BPMN_EXECUTION_VARIABLE_REPORT_RECEIVE_ERROR_MESSAGE = "reportReceiveErrorMessage";
+	String BPMN_EXECUTION_VARIABLE_IS_DRY_RUN = "isDryRun";
+	String BPMN_EXECUTION_VARIABLE_REPORT_DISTRIBUTION = "reportDistribution";
+	String BPMN_EXECUTION_VARIABLE_REPORT_DISTRIBUTION_WAIT_AGGREGATE_TIMER_INTERVAL = "reportWaitBeforeAggregate";
 
 	String CODESYSTEM_REPORT = "http://medizininformatik-initiative.de/fhir/CodeSystem/report";
-
-	String CODESYSTEM_REPORT_VALUE_SEARCH_BUNDLE = "search-bundle-v";
 	String CODESYSTEM_REPORT_VALUE_SEARCH_BUNDLE_RESPONSE_REFERENCE = "search-bundle-response-reference";
 	String CODESYSTEM_REPORT_VALUE_REPORT_STATUS = "report-status";
 	String CODESYSTEM_REPORT_VALUE_TIMER_INTERVAL = "timer-interval";
 	String CODESYSTEM_REPORT_VALUE_FIRST_EXECUTION = "first-execution";
 	String CODESYSTEM_REPORT_VALUE_HRP_IDENTIFIER = "hrp-identifier";
+	String CODESYSTEM_REPORT_VALUE_DRY_RUN = "dry-run";
 
 	String CODESYSTEM_REPORT_STATUS = "http://medizininformatik-initiative.de/fhir/CodeSystem/report-status";
 	String CODESYSTEM_REPORT_STATUS_VALUE_NOT_ALLOWED = "not-allowed";
@@ -59,11 +62,20 @@ public interface ConstantsReport
 	String CODESYSTEM_REPORT_STATUS_VALUE_RECEIPT_ERROR = "receipt-error";
 	String CODESYSTEM_REPORT_STATUS_VALUE_RECEIVE_OK = "receive-ok";
 	String CODESYSTEM_REPORT_STATUS_VALUE_RECEIVE_ERROR = "receive-error";
+	String CODESYSTEM_REPORT_STATUS_VALUE_DRY_RUN = "dry-run";
+
+	String VALUESET_REPORT_STATUS_SEND = "http://medizininformatik-initiative.de/fhir/ValueSet/report-status-send";
 
 	String NAMINGSYSTEM_CDS_REPORT_IDENTIFIER = "http://medizininformatik-initiative.de/sid/cds-report-identifier";
+	String NAMINGSYSTEM_SEARCH_BUNDLE_IDENTIFIER = "http://medizininformatik-initiative.de/sid/search-bundle-identifier";
+	String NAMINGSYSTEM_SEARCH_BUNDLE_IDENTIFIER_VALUE_PREFIX = "search-bundle-v";
 
 	String PROFILE_REPORT_SEARCH_BUNDLE_RESPONSE = "http://medizininformatik-initiative.de/fhir/Bundle/search-bundle-response-report";
 	String EXTENSION_REPORT_STATUS_ERROR_URL = "http://medizininformatik-initiative.de/fhir/StructureDefinition/extension-report-status-error";
 
 	String REPORT_TIMER_INTERVAL_DEFAULT_VALUE = "P7D";
+	String META_TAG_CODE_ORGANIZATION = "ORGANIZATION";
+
+	Coding DIC = new Coding("http://dsf.dev/fhir/CodeSystem/organization-role", "DIC", "Data Integration Center");
+
 }

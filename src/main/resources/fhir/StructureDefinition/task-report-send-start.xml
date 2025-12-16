@@ -28,7 +28,7 @@
     <element id="Task.input">
       <path value="Task.input" />
       <min value="1" />
-      <max value="3" />
+      <max value="4" />
     </element>
     <element id="Task.input:message-name">
       <path value="Task.input" />
@@ -47,6 +47,40 @@
       <path value="Task.input" />
       <sliceName value="correlation-key" />
       <max value="0" />
+    </element>
+    <element id="Task.input:dry-run">
+      <path value="Task.input" />
+      <sliceName value="dry-run" />
+      <min value="0" />
+      <max value="1" />
+    </element>
+    <element id="Task.input:dry-run.type">
+      <path value="Task.input.type" />
+      <binding>
+        <strength value="required" />
+        <valueSet value="http://medizininformatik-initiative.de/fhir/ValueSet/report|#{version}" />
+      </binding>
+    </element>
+    <element id="Task.input:dry-run.type.coding">
+      <path value="Task.input.type.coding" />
+      <min value="1" />
+      <max value="1" />
+    </element>
+    <element id="Task.input:dry-run.type.coding.system">
+      <path value="Task.input.type.coding.system" />
+      <min value="1" />
+      <fixedUri value="http://medizininformatik-initiative.de/fhir/CodeSystem/report" />
+    </element>
+    <element id="Task.input:dry-run.type.coding.code">
+      <path value="Task.input.type.coding.code" />
+      <min value="1" />
+      <fixedCode value="dry-run" />
+    </element>
+    <element id="Task.input:dry-run.value[x]">
+      <path value="Task.input.value[x]" />
+      <type>
+        <code value="boolean" />
+      </type>
     </element>
     <element id="Task.input:hrp-identifier">
       <path value="Task.input"/>

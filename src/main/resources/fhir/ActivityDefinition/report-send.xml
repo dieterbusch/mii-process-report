@@ -18,7 +18,7 @@
 					<extension url="parent-organization">
 						<valueIdentifier>
 							<system value="http://dsf.dev/sid/organization-identifier" />
-							<value value="medizininformatik-initiative.de" />
+                            <value value="#{edu.ubi.medfak.report.dsf.process.send.organization.identifier.value:medizininformatik-initiative.de}" />
 						</valueIdentifier>
 					</extension>
 					<extension url="organization-role">
@@ -38,7 +38,7 @@
 					<extension url="parent-organization">
 						<valueIdentifier>
 							<system value="http://dsf.dev/sid/organization-identifier" />
-							<value value="medizininformatik-initiative.de" />
+                            <value value="#{edu.ubi.medfak.report.dsf.process.send.organization.identifier.value:medizininformatik-initiative.de}" />
 						</valueIdentifier>
 					</extension>
 					<extension url="organization-role">
@@ -64,7 +64,7 @@
 					<extension url="parent-organization">
 						<valueIdentifier>
 							<system value="http://dsf.dev/sid/organization-identifier" />
-							<value value="medizininformatik-initiative.de" />
+                            <value value="#{edu.ubi.medfak.report.dsf.process.send.organization.identifier.value:medizininformatik-initiative.de}" />
 						</valueIdentifier>
 					</extension>
 					<extension url="organization-role">
@@ -92,7 +92,7 @@
 					<extension url="parent-organization">
 						<valueIdentifier>
 							<system value="http://dsf.dev/sid/organization-identifier" />
-							<value value="medizininformatik-initiative.de" />
+                            <value value="#{edu.ubi.medfak.report.dsf.process.send.organization.identifier.value:medizininformatik-initiative.de}" />
 						</valueIdentifier>
 					</extension>
 					<extension url="organization-role">
@@ -112,7 +112,7 @@
 					<extension url="parent-organization">
 						<valueIdentifier>
 							<system value="http://dsf.dev/sid/organization-identifier" />
-							<value value="medizininformatik-initiative.de" />
+                            <value value="#{edu.ubi.medfak.report.dsf.process.send.organization.identifier.value:medizininformatik-initiative.de}" />
 						</valueIdentifier>
 					</extension>
 					<extension url="organization-role">

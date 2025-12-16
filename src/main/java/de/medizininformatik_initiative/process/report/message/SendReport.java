@@ -3,11 +3,14 @@ package de.medizininformatik_initiative.process.report.message;
 import java.util.Objects;
 import java.util.stream.Stream;
 
+import de.medizininformatik_initiative.process.report.service.AggregateReports;
 import org.camunda.bpm.engine.delegate.DelegateExecution;
 import org.hl7.fhir.r4.model.IdType;
 import org.hl7.fhir.r4.model.Reference;
 import org.hl7.fhir.r4.model.ResourceType;
 import org.hl7.fhir.r4.model.Task;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
 
 import de.medizininformatik_initiative.process.report.ConstantsReport;
@@ -22,6 +25,8 @@ import jakarta.ws.rs.core.Response;
 
 public class SendReport extends AbstractTaskMessageSend implements InitializingBean
 {
+	private static final Logger logger = LoggerFactory.getLogger(SendReport.class);
+
 	private final ReportStatusGenerator statusGenerator;
 
 	public SendReport(ProcessPluginApi api, ReportStatusGenerator statusGenerator)
@@ -55,6 +60,8 @@ public class SendReport extends AbstractTaskMessageSend implements InitializingB
 	@Override
 	protected IdType doSend(FhirWebserviceClient client, Task task)
 	{
+		logger.info("SendReport doSend");
+
 		return client.withMinimalReturn()
 				.withRetry(ConstantsBase.DSF_CLIENT_RETRY_6_TIMES, ConstantsBase.DSF_CLIENT_RETRY_INTERVAL_5MIN)
 				.create(task);

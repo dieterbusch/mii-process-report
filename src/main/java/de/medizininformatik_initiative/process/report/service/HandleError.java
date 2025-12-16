@@ -8,9 +8,13 @@ import de.medizininformatik_initiative.processes.common.util.ConstantsBase;
 import dev.dsf.bpe.v1.ProcessPluginApi;
 import dev.dsf.bpe.v1.activity.AbstractServiceDelegate;
 import dev.dsf.bpe.v1.variables.Variables;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class HandleError extends AbstractServiceDelegate
 {
+	private static final Logger logger = LoggerFactory.getLogger(HandleError.class);
+
 	public HandleError(ProcessPluginApi api)
 	{
 		super(api);
@@ -19,6 +23,8 @@ public class HandleError extends AbstractServiceDelegate
 	@Override
 	protected void doExecute(DelegateExecution delegateExecution, Variables variables)
 	{
+		logger.info("HandleError doExecute");
+
 		Task task = variables.getStartTask();
 
 		if (Task.TaskStatus.FAILED.equals(task.getStatus()))
