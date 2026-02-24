@@ -42,7 +42,9 @@ public class SelectTargetHrp extends AbstractServiceDelegate implements HrpExtra
 
 		Coding hrpRole = new Coding().setSystem(ConstantsBase.CODESYSTEM_DSF_ORGANIZATION_ROLE)
 				.setCode(ConstantsBase.CODESYSTEM_DSF_ORGANIZATION_ROLE_VALUE_HRP);
-
+        // 1. use hrp-identifier provided from task, if not present
+        // 2. use hrp-identifier provided from ENV variable, if not present
+        // 3. search hrp-identifier for mii-parent-organization and use first found
 		String hrpIdentifier = hrpExtract(api, startTask, hrpIdentifierEnvVariable, hrpRole, parentIdentifier);
 
 		Identifier organizationIdentifier = NamingSystems.OrganizationIdentifier.withValue(hrpIdentifier);
