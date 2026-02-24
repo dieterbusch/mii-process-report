@@ -38,9 +38,9 @@ public class ReportProcessPluginDeploymentStateListener
 	{
 		this.api = api;
 		this.fhirClientFactory = fhirClientFactory;
-		this.reportDistributeAsBroker = reportDistributeAsBroker;
 		this.metadataResourceConverter = metadataResourceConverter;
 		this.resourcesVersion = resourcesVersion;
+		this.reportDistributeAsBroker = reportDistributeAsBroker;
 	}
 
 	@Override
@@ -76,7 +76,6 @@ public class ReportProcessPluginDeploymentStateListener
 			updateDraftTaskReportSendStart();
 
 			fhirClientFactory.testConnection();
-
 		}
 	}
 

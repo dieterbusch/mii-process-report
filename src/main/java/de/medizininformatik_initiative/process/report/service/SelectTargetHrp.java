@@ -1,5 +1,14 @@
 package de.medizininformatik_initiative.process.report.service;
 
+import org.camunda.bpm.engine.delegate.DelegateExecution;
+import org.hl7.fhir.r4.model.BooleanType;
+import org.hl7.fhir.r4.model.Coding;
+import org.hl7.fhir.r4.model.Endpoint;
+import org.hl7.fhir.r4.model.Identifier;
+import org.hl7.fhir.r4.model.Task;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import de.medizininformatik_initiative.process.report.ConstantsReport;
 import de.medizininformatik_initiative.process.report.HrpExtracter;
 import de.medizininformatik_initiative.processes.common.util.ConstantsBase;
@@ -8,10 +17,7 @@ import dev.dsf.bpe.v1.activity.AbstractServiceDelegate;
 import dev.dsf.bpe.v1.constants.NamingSystems;
 import dev.dsf.bpe.v1.variables.Target;
 import dev.dsf.bpe.v1.variables.Variables;
-import org.camunda.bpm.engine.delegate.DelegateExecution;
 import org.hl7.fhir.r4.model.*;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class SelectTargetHrp extends AbstractServiceDelegate implements HrpExtracter
 {
@@ -43,11 +49,14 @@ public class SelectTargetHrp extends AbstractServiceDelegate implements HrpExtra
 		Coding hrpRole = new Coding().setSystem(ConstantsBase.CODESYSTEM_DSF_ORGANIZATION_ROLE)
 				.setCode(ConstantsBase.CODESYSTEM_DSF_ORGANIZATION_ROLE_VALUE_HRP);
 
-		String hrpIdentifier = hrpExtract(api, startTask, hrpIdentifierEnvVariable, hrpRole, parentIdentifier);
+		// 1. use hrp-identifier provided from task, if not present
+		// 2. use hrp-identifier provided from ENV variable, if not present
+		// 3. search hrp-identifier for mii-parent-organization and use first found
+        String hrpIdentifier = hrpExtract(api, startTask, hrpIdentifierEnvVariable, hrpRole, parentIdentifier);
 
-		Identifier organizationIdentifier = NamingSystems.OrganizationIdentifier.withValue(hrpIdentifier);
+        Identifier organizationIdentifier = NamingSystems.OrganizationIdentifier.withValue(hrpIdentifier);
 
-		Endpoint endpoint = getEndpoint(api, parentIdentifier, organizationIdentifier, hrpRole);
+        Endpoint endpoint = getEndpoint(api, parentIdentifier, organizationIdentifier, hrpRole);
 
 		String endpointIdentifier = extractEndpointIdentifier(endpoint);
 
@@ -61,13 +70,13 @@ public class SelectTargetHrp extends AbstractServiceDelegate implements HrpExtra
 		variables.setBoolean(ConstantsReport.BPMN_EXECUTION_VARIABLE_IS_DRY_RUN, isDryRun);
 	}
 
+    private boolean isDryRun(Variables variables)
+    {
+        return api.getTaskHelper()
+                .getFirstInputParameterValue(variables.getStartTask(), ConstantsReport.CODESYSTEM_REPORT,
+                        ConstantsReport.CODESYSTEM_REPORT_VALUE_DRY_RUN, BooleanType.class)
+                .map(BooleanType::booleanValue).orElse(false);
+    }
 
-	private boolean isDryRun(Variables variables)
-	{
-		return api.getTaskHelper()
-				.getFirstInputParameterValue(variables.getStartTask(), ConstantsReport.CODESYSTEM_REPORT,
-						ConstantsReport.CODESYSTEM_REPORT_VALUE_DRY_RUN, BooleanType.class)
-				.map(BooleanType::booleanValue).orElse(false);
-	}
 
 }

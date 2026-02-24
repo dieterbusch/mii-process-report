@@ -5,19 +5,8 @@ import de.medizininformatik_initiative.process.report.ReportProcessPluginDeploym
 import de.medizininformatik_initiative.process.report.message.SendReceipt;
 import de.medizininformatik_initiative.process.report.message.SendReport;
 import de.medizininformatik_initiative.process.report.message.StartSendReport;
-import de.medizininformatik_initiative.process.report.service.CheckSearchBundle;
-import de.medizininformatik_initiative.process.report.service.CreateReport;
-import de.medizininformatik_initiative.process.report.service.DownloadReport;
-import de.medizininformatik_initiative.process.report.service.DownloadSearchBundle;
-import de.medizininformatik_initiative.process.report.service.HandleError;
-import de.medizininformatik_initiative.process.report.service.InsertReport;
-import de.medizininformatik_initiative.process.report.service.LogDryRun;
-import de.medizininformatik_initiative.process.report.service.SelectTargetDic;
-import de.medizininformatik_initiative.process.report.service.SelectTargetHrp;
-import de.medizininformatik_initiative.process.report.service.SetTimer;
-import de.medizininformatik_initiative.process.report.service.StoreReceipt;
-import de.medizininformatik_initiative.process.report.service.*;
 import de.medizininformatik_initiative.process.report.util.ReportStatusGenerator;
+import de.medizininformatik_initiative.process.report.service.*;
 import de.medizininformatik_initiative.process.report.util.SearchQueryCheckService;
 import de.medizininformatik_initiative.processes.common.util.MetadataResourceConverter;
 import dev.dsf.bpe.v1.ProcessPluginApi;
@@ -45,6 +34,11 @@ public class ReportConfig
 	private String hrpIdentifier;
 
 	@ProcessDocumentation(processNames = {
+			"medizininformatik-initiativede_reportSend" }, description = "To enable asynchronous request pattern when executing search bundle requests set to `true`")
+	@Value("${de.medizininformatik.initiative.report.dic.fhir.server.async.enabled:false}")
+	private boolean fhirAsyncEnabled;
+
+	@ProcessDocumentation(processNames = {
 			"medizininformatik-initiativede_reportSend" }, description = "Parent organization for which the send process is running. Default: `medizininformatik-initiative.de`", example = "medizininformatik-initiative.de")
 	@Value("${edu.ubi.medfak.report.dsf.process.send.organization.identifier.value:medizininformatik-initiative.de}")
 	private String reportSendOrganizationIdentifier;
@@ -63,11 +57,6 @@ public class ReportConfig
 			"medizininformatik-initiativede_reportSend" }, description = "Execution interval before the aggregation of the received reports starts. Default: `P1D`", example = "P1D")
 	@Value("${edu.ubi.medfak.report.dsf.process.distribute.wait.aggregate.intervall:P1D}")
 	private String reportDistributeWaitInterval;
-
-	@ProcessDocumentation(processNames = {
-			"medizininformatik-initiativede_reportSend" }, description = "To enable asynchronous request pattern when executing search bundle requests set to `true`")
-	@Value("${de.medizininformatik.initiative.report.dic.fhir.server.async.enabled:false}")
-	private boolean fhirAsyncEnabled;
 
 	// all Processes
 
@@ -91,7 +80,6 @@ public class ReportConfig
 	public ProcessPluginDeploymentStateListener reportProcessPluginDeploymentStateListener()
 	{
 		String resourcesVersion = new ReportProcessPluginDefinition().getResourceVersion();
-
 		return new ReportProcessPluginDeploymentStateListener(api, fhirClientConfig.fhirClientFactory(),
 				metadataResourceConverter(), resourcesVersion, reportDistributeAsBroker);
 	}
@@ -133,6 +121,14 @@ public class ReportConfig
 	@Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
 	public CheckSearchBundle checkSearchBundle()
 	{
+		return new CheckSearchBundle(api, searchQueryCheckService());
+	}
+
+	@Bean
+	@Scope(ConfigurableBeanFactory.SCOPE_SINGLETON)
+	public SearchQueryCheckService searchQueryCheckService()
+	{
+		return new SearchQueryCheckService();
 		return new CheckSearchBundle(api, searchQueryCheckService(), reportDistributeAsBroker,
 				reportDistributeWaitInterval);
 	}
