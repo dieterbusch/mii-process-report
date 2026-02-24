@@ -3,7 +3,6 @@ package de.medizininformatik_initiative.process.report.message;
 import java.util.Objects;
 import java.util.stream.Stream;
 
-import de.medizininformatik_initiative.process.report.service.AggregateReports;
 import org.camunda.bpm.engine.delegate.DelegateExecution;
 import org.hl7.fhir.r4.model.IdType;
 import org.hl7.fhir.r4.model.Reference;
@@ -14,6 +13,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
 
 import de.medizininformatik_initiative.process.report.ConstantsReport;
+import de.medizininformatik_initiative.process.report.service.AggregateReports;
 import de.medizininformatik_initiative.process.report.util.ReportStatusGenerator;
 import de.medizininformatik_initiative.processes.common.util.ConstantsBase;
 import dev.dsf.bpe.v1.ProcessPluginApi;

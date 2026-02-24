@@ -1,15 +1,16 @@
 package de.medizininformatik_initiative.process.report;
 
-import de.medizininformatik_initiative.processes.common.util.ConstantsBase;
-import dev.dsf.bpe.v1.ProcessPluginApi;
-import dev.dsf.bpe.v1.constants.NamingSystems;
+import java.util.List;
+import java.util.Optional;
+import java.util.function.Supplier;
+
 import org.hl7.fhir.r4.model.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.List;
-import java.util.Optional;
-import java.util.function.Supplier;
+import de.medizininformatik_initiative.processes.common.util.ConstantsBase;
+import dev.dsf.bpe.v1.ProcessPluginApi;
+import dev.dsf.bpe.v1.constants.NamingSystems;
 
 public interface HrpExtracter
 {

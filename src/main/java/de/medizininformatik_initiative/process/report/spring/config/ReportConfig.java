@@ -1,10 +1,18 @@
 package de.medizininformatik_initiative.process.report.spring.config;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.beans.factory.config.ConfigurableBeanFactory;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Scope;
+
 import de.medizininformatik_initiative.process.report.ReportProcessPluginDefinition;
 import de.medizininformatik_initiative.process.report.ReportProcessPluginDeploymentStateListener;
 import de.medizininformatik_initiative.process.report.message.SendReceipt;
 import de.medizininformatik_initiative.process.report.message.SendReport;
 import de.medizininformatik_initiative.process.report.message.StartSendReport;
+import de.medizininformatik_initiative.process.report.service.*;
 import de.medizininformatik_initiative.process.report.service.CheckSearchBundle;
 import de.medizininformatik_initiative.process.report.service.CreateReport;
 import de.medizininformatik_initiative.process.report.service.DownloadReport;
@@ -16,19 +24,12 @@ import de.medizininformatik_initiative.process.report.service.SelectTargetDic;
 import de.medizininformatik_initiative.process.report.service.SelectTargetHrp;
 import de.medizininformatik_initiative.process.report.service.SetTimer;
 import de.medizininformatik_initiative.process.report.service.StoreReceipt;
-import de.medizininformatik_initiative.process.report.service.*;
 import de.medizininformatik_initiative.process.report.util.ReportStatusGenerator;
 import de.medizininformatik_initiative.process.report.util.SearchQueryCheckService;
 import de.medizininformatik_initiative.processes.common.util.MetadataResourceConverter;
 import dev.dsf.bpe.v1.ProcessPluginApi;
 import dev.dsf.bpe.v1.ProcessPluginDeploymentStateListener;
 import dev.dsf.bpe.v1.documentation.ProcessDocumentation;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.beans.factory.config.ConfigurableBeanFactory;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Scope;
 
 @Configuration
 public class ReportConfig

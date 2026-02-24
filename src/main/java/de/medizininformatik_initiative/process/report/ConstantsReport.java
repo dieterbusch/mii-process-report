@@ -1,7 +1,8 @@
 package de.medizininformatik_initiative.process.report;
 
-import de.medizininformatik_initiative.processes.common.util.ConstantsBase;
 import org.hl7.fhir.r4.model.Coding;
+
+import de.medizininformatik_initiative.processes.common.util.ConstantsBase;
 
 public interface ConstantsReport
 {

@@ -1,13 +1,14 @@
 package de.medizininformatik_initiative.process.report;
 
-import dev.dsf.fhir.client.FhirWebserviceClient;
+import java.util.Collections;
+import java.util.Map;
+
 import org.hl7.fhir.r4.model.Bundle;
 import org.hl7.fhir.r4.model.Resource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.Collections;
-import java.util.Map;
+import dev.dsf.fhir.client.FhirWebserviceClient;
 
 public interface SaveOrUpdateBundle
 {

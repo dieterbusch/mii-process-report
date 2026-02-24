@@ -3,7 +3,6 @@ package de.medizininformatik_initiative.process.report.message;
 import java.util.Objects;
 import java.util.stream.Stream;
 
-import dev.dsf.fhir.client.FhirWebserviceClient;
 import org.camunda.bpm.engine.delegate.DelegateExecution;
 import org.hl7.fhir.r4.model.Coding;
 import org.hl7.fhir.r4.model.IdType;
@@ -18,6 +17,7 @@ import de.medizininformatik_initiative.process.report.util.ReportStatusGenerator
 import dev.dsf.bpe.v1.ProcessPluginApi;
 import dev.dsf.bpe.v1.activity.AbstractTaskMessageSend;
 import dev.dsf.bpe.v1.variables.Variables;
+import dev.dsf.fhir.client.FhirWebserviceClient;
 
 public class SendReceipt extends AbstractTaskMessageSend implements InitializingBean
 {
