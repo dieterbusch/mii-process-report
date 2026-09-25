@@ -8,7 +8,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Scope;
 
 import de.medizininformatik_initiative.process.report.ReportProcessPluginDefinition;
-import de.medizininformatik_initiative.process.report.ReportProcessPluginDeploymentStateListener;
+import de.medizininformatik_initiative.process.report.ReportProcessPluginDeploymentListener;
 import de.medizininformatik_initiative.process.report.message.SendReceipt;
 import de.medizininformatik_initiative.process.report.message.SendReport;
 import de.medizininformatik_initiative.process.report.message.StartSendReport;
@@ -27,18 +27,14 @@ import de.medizininformatik_initiative.process.report.service.StoreReceipt;
 import de.medizininformatik_initiative.process.report.util.ReportStatusGenerator;
 import de.medizininformatik_initiative.process.report.util.SearchQueryCheckService;
 import de.medizininformatik_initiative.processes.common.util.MetadataResourceConverter;
-import dev.dsf.bpe.v1.ProcessPluginApi;
-import dev.dsf.bpe.v1.ProcessPluginDeploymentStateListener;
-import dev.dsf.bpe.v1.documentation.ProcessDocumentation;
+import dev.dsf.bpe.v2.ProcessPluginApi;
+import dev.dsf.bpe.v2.documentation.ProcessDocumentation;
 
 @Configuration
 public class ReportConfig
 {
 	@Autowired
 	private ProcessPluginApi api;
-
-	@Autowired
-	private FhirClientConfig fhirClientConfig;
 
 	@ProcessDocumentation(processNames = {
 			"medizininformatik-initiativede_reportSend" }, description = "The identifier of the HRP which should receive the report", recommendation = "Only configure if more than one HRP exists in your network", example = "forschen-fuer-gesundheit.de")
@@ -65,12 +61,36 @@ public class ReportConfig
 	@Value("${edu.ubi.medfak.report.dsf.process.distribute.wait.aggregate.intervall:P1D}")
 	private String reportDistributeWaitInterval;
 
+	@ProcessDocumentation(required = true, processNames = {
+			"medizininformatik-initiativede_reportSend" }, description = "The ID of a DIC FHIR server from the main DSF configuration as 'DSF FHIR Client'", example = "dic-fhir-store")
+	@Value("${de.medizininformatik.initiative.report.dic.fhir.server.id:#{null}}")
+	private String fhirStoreId;
+
 	@ProcessDocumentation(processNames = {
-			"medizininformatik-initiativede_reportSend" }, description = "To enable asynchronous request pattern when executing search bundle requests set to `true`")
-	@Value("${de.medizininformatik.initiative.report.dic.fhir.server.async.enabled:false}")
-	private boolean fhirAsyncEnabled;
+			"medizininformatik-initiativede_reportSend" }, description = "To receive e-mails as dic, set to `true`")
+	@Value("${de.medizininformatik.initiative.report.dic.email.enabled:false}")
+	private boolean dicEmailEnabled;
+
+	@ProcessDocumentation(processNames = {
+			"medizininformatik-initiativede_reportSend" }, description = "The period the process waits to receive the status from the HRP, must be an ISO 8601 time duration pattern")
+	@Value("${de.medizininformatik.initiative.report.dic.status.timer.interval:PT45M}")
+	private String statusTimerInterval;
+
+	@ProcessDocumentation(processNames = {
+			"medizininformatik-initiativede_reportReceive" }, description = "To receive e-mails as hrp, set to `true`")
+	@Value("${de.medizininformatik.initiative.report.hrp.email.enabled:false}")
+	private boolean hrpEmailEnabled;
+
 
 	// all Processes
+
+	@Bean
+	@Scope(ConfigurableBeanFactory.SCOPE_SINGLETON)
+	public ReportProcessPluginDeploymentListener reportProcessPluginDeploymentListener()
+	{
+		return new ReportProcessPluginDeploymentListener(api, fhirStoreId, reportDistributeAsBroker,
+				reportSendOrganizationIdentifier, reportReceiveOrganizationIdentifier);
+	}
 
 	@Bean
 	@Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
@@ -79,23 +99,6 @@ public class ReportConfig
 		return new ReportStatusGenerator();
 	}
 
-	@Bean
-	@Scope(ConfigurableBeanFactory.SCOPE_SINGLETON)
-	public MetadataResourceConverter metadataResourceConverter()
-	{
-		String resourcesVersion = new ReportProcessPluginDefinition().getResourceVersion();
-		return new MetadataResourceConverter(api, resourcesVersion);
-	}
-
-	@Bean
-	@Scope(ConfigurableBeanFactory.SCOPE_SINGLETON)
-	public ProcessPluginDeploymentStateListener reportProcessPluginDeploymentStateListener()
-	{
-		String resourcesVersion = new ReportProcessPluginDefinition().getResourceVersion();
-
-		return new ReportProcessPluginDeploymentStateListener(api, fhirClientConfig.fhirClientFactory(),
-				metadataResourceConverter(), resourcesVersion, reportDistributeAsBroker);
-	}
 
 	// reportAutostart Process
 
@@ -103,14 +106,14 @@ public class ReportConfig
 	@Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
 	public SetTimer setTimer()
 	{
-		return new SetTimer(api);
+		return new SetTimer();
 	}
 
 	@Bean
 	@Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
 	public StartSendReport startSendReport()
 	{
-		return new StartSendReport(api);
+		return new StartSendReport();
 	}
 
 	// reportSend Process
@@ -119,23 +122,21 @@ public class ReportConfig
 	@Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
 	public SelectTargetHrp selectTargetHrp()
 	{
-		return new SelectTargetHrp(api, hrpIdentifier, reportSendOrganizationIdentifier);
+		return new SelectTargetHrp(statusTimerInterval, hrpIdentifier, reportSendOrganizationIdentifier);
 	}
 
 	@Bean
 	@Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
 	public DownloadSearchBundle downloadSearchBundle()
 	{
-		String processVersion = new ReportProcessPluginDefinition().getResourceVersion();
-		return new DownloadSearchBundle(api, reportStatusGenerator(), fhirClientConfig.dataLogger(), processVersion);
+		return new DownloadSearchBundle(reportStatusGenerator());
 	}
 
 	@Bean
 	@Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
 	public CheckSearchBundle checkSearchBundle()
 	{
-		return new CheckSearchBundle(api, searchQueryCheckService(), reportDistributeAsBroker,
-				reportDistributeWaitInterval);
+		return new CheckSearchBundle(searchQueryCheckService(), reportDistributeAsBroker, reportDistributeWaitInterval);
 	}
 
 
@@ -150,16 +151,14 @@ public class ReportConfig
 	@Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
 	public CreateReport createReport()
 	{
-		String resourceVersion = new ReportProcessPluginDefinition().getResourceVersion();
-		return new CreateReport(api, resourceVersion, fhirClientConfig.fhirClientFactory(), fhirAsyncEnabled,
-				fhirClientConfig.dataLogger());
+		return new CreateReport(fhirStoreId);
 	}
 
 	@Bean
 	@Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
 	public LogDryRun logDryRun()
 	{
-		return new LogDryRun(api, reportStatusGenerator());
+		return new LogDryRun(reportStatusGenerator(), dicEmailEnabled);
 	}
 
 	@Bean
@@ -173,21 +172,21 @@ public class ReportConfig
 	@Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
 	public StoreReceipt storeReceipt()
 	{
-		return new StoreReceipt(api, reportStatusGenerator());
+		return new StoreReceipt(reportStatusGenerator(), dicEmailEnabled);
 	}
 
 	@Bean
 	@Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
 	public StoreSearchBundle storeSearchBundle()
 	{
-		return new StoreSearchBundle(api);
+		return new StoreSearchBundle();
 	}
 
 	@Bean
 	@Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
 	public AggregateReports aggregateReports()
 	{
-		return new AggregateReports(api, hrpIdentifier, reportReceiveOrganizationIdentifier);
+		return new AggregateReports(hrpIdentifier, reportReceiveOrganizationIdentifier);
 	}
 
 	// reportReceive Process
@@ -196,28 +195,28 @@ public class ReportConfig
 	@Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
 	public DownloadReport downloadReport()
 	{
-		return new DownloadReport(api, reportStatusGenerator());
+		return new DownloadReport();
 	}
 
 	@Bean
 	@Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
 	public InsertReport insertReport()
 	{
-		return new InsertReport(api, reportStatusGenerator());
+		return new InsertReport(reportStatusGenerator(), hrpEmailEnabled);
 	}
 
 	@Bean
 	@Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
 	public HandleError handleError()
 	{
-		return new HandleError(api);
+		return new HandleError(reportStatusGenerator(), hrpEmailEnabled);
 	}
 
 	@Bean
 	@Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
 	public SelectTargetDic selectTargetDic()
 	{
-		return new SelectTargetDic(api, reportReceiveOrganizationIdentifier);
+		return new SelectTargetDic(reportReceiveOrganizationIdentifier);
 	}
 
 	@Bean

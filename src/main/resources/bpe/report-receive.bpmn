@@ -65,8 +65,8 @@
   <bpmn:message id="Message_0u91abp" name="reportSend" />
   <bpmn:message id="Message_1h0kvyq" />
   <bpmn:error id="Error_1j0t9ud" name="target_not_allowed" errorCode="target_not_allowed" />
-  <bpmn:error id="Error_1nrrh7v" name="reportReceiveError" errorCode="reportReceiveError" />
-  <bpmn:error id="Error_1y2mnsr" name="reportReceiveError" errorCode="reportReceiveError" />
+  <bpmn:error id="Error_1nrrh7v" name="reportReceiveError" errorCode="receive-error" />
+  <bpmn:error id="Error_1y2mnsr" name="reportReceiveError" errorCode="receive-error" />
   <bpmndi:BPMNDiagram id="BPMNDiagram_1">
     <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="medizininformatik-initiativede_reportReceive">
       <bpmndi:BPMNShape id="StartEvent_1qh431z_di" bpmnElement="startReceiveReport">

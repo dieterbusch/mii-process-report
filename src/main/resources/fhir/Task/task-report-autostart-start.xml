@@ -39,6 +39,7 @@
 		<type>
 			<coding>
 				<system value="http://medizininformatik-initiative.de/fhir/CodeSystem/report"/>
+				<version value="#{version}"/>
 				<code value="timer-interval"/>
 			</coding>
 		</type>
@@ -48,6 +49,7 @@
 		<type>
 			<coding>
 				<system value="http://medizininformatik-initiative.de/fhir/CodeSystem/report"/>
+				<version value="#{version}"/>
 				<code value="first-execution"/>
 			</coding>
 		</type>
@@ -57,6 +59,7 @@
 		<type>
 			<coding>
 				<system value="http://medizininformatik-initiative.de/fhir/CodeSystem/report" />
+				<version value="#{version}"/>
 				<code value="hrp-identifier" />
 			</coding>
 		</type>

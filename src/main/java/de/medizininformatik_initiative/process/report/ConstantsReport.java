@@ -36,11 +36,13 @@ public interface ConstantsReport
 	String PROFILE_TASK_REPORT_RECEIVE_PROCESS_URI = ConstantsBase.PROCESS_MII_URI_BASE + PROCESS_NAME_REPORT_RECEIVE;
 	String PROFILE_TASK_REPORT_RECEIVE_MESSAGE_NAME = "reportReceive";
 
+	String BPMN_EXECUTION_VARIABLE_STATUS_TIMER_INTERVAL = "statusTimerInterval";
 	String BPMN_EXECUTION_VARIABLE_REPORT_TIMER_INTERVAL = "reportTimerInterval";
 	String BPMN_EXECUTION_VARIABLE_REPORT_FIRST_EXECUTION = "reportFirstExecution";
 	String BPMN_EXECUTION_VARIABLE_REPORT_FIRST_EXECUTION_DELAYED = "reportFirstExecutionDelayed";
 	String BPMN_EXECUTION_VARIABLE_REPORT_SEARCH_BUNDLE = "reportSearchBundle";
 	String BPMN_EXECUTION_VARIABLE_REPORT_SEARCH_BUNDLE_RESPONSE_REFERENCE = "reportSearchBundleResponseReference";
+
 	String BPMN_EXECUTION_VARIABLE_REPORT_RECEIVE_ERROR = "reportReceiveError";
 	String BPMN_EXECUTION_VARIABLE_REPORT_RECEIVE_ERROR_MESSAGE = "reportReceiveErrorMessage";
 	String BPMN_EXECUTION_VARIABLE_IS_DRY_RUN = "isDryRun";
@@ -65,8 +67,6 @@ public interface ConstantsReport
 	String CODESYSTEM_REPORT_STATUS_VALUE_RECEIVE_ERROR = "receive-error";
 	String CODESYSTEM_REPORT_STATUS_VALUE_DRY_RUN = "dry-run";
 
-	String VALUESET_REPORT_STATUS_SEND = "http://medizininformatik-initiative.de/fhir/ValueSet/report-status-send";
-
 	String NAMINGSYSTEM_CDS_REPORT_IDENTIFIER = "http://medizininformatik-initiative.de/sid/cds-report-identifier";
 	String NAMINGSYSTEM_SEARCH_BUNDLE_IDENTIFIER = "http://medizininformatik-initiative.de/sid/search-bundle-identifier";
 	String NAMINGSYSTEM_SEARCH_BUNDLE_IDENTIFIER_VALUE_PREFIX = "search-bundle-v";
@@ -78,5 +78,11 @@ public interface ConstantsReport
 	String META_TAG_CODE_ORGANIZATION = "ORGANIZATION";
 
 	Coding DIC = new Coding("http://dsf.dev/fhir/CodeSystem/organization-role", "DIC", "Data Integration Center");
+
+	String REPORT_SEND_URL = "http://medizininformatik-initiative.de/bpe/Process/reportSend";
+
+	String REPORT_AUTOSTART_URL = "http://medizininformatik-initiative.de/bpe/Process/reportAutostart";
+
+	String REPORT_RECEIVE_URL = "http://medizininformatik-initiative.de/bpe/Process/reportReceive";
 
 }

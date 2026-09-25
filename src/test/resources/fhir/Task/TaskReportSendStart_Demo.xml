@@ -1,16 +1,16 @@
 <Task xmlns="http://hl7.org/fhir">
 	<meta>
-		<profile value="http://medizininformatik-initiative.de/fhir/StructureDefinition/task-report-send-start|1.0"></profile>
+		<profile value="http://medizininformatik-initiative.de/fhir/StructureDefinition/task-report-send-start|2.0"></profile>
 	</meta>
-	<instantiatesCanonical value="http://medizininformatik-initiative.de/bpe/Process/reportSend|1.0"></instantiatesCanonical>
+	<instantiatesCanonical value="http://medizininformatik-initiative.de/bpe/Process/reportSend|2.0"></instantiatesCanonical>
 	<status value="requested"></status>
 	<intent value="order"></intent>
 	<authoredOn value="2022-11-16T17:49:15+01:00"></authoredOn>
 	<requester>
-		<type value="Organization"></type>
+		<type value="Practitioner"></type>
 		<identifier>
-			<system value="http://dsf.dev/sid/organization-identifier"></system>
-			<value value="Test_DIC1"></value>
+			<system value="http://dsf.dev/sid/practitioner-identifier"></system>
+			<value value="to-be-replaced-with-certificate-email"></value>
 		</identifier>
 	</requester>
 	<restriction>
@@ -26,9 +26,41 @@
 		<type>
 			<coding>
 				<system value="http://dsf.dev/fhir/CodeSystem/bpmn-message"></system>
+				<version value="2.0"></version>
 				<code value="message-name"></code>
 			</coding>
 		</type>
 		<valueString value="reportSendStart"></valueString>
 	</input>
+	<!--
+	<input>
+		<type>
+			<coding>
+				<system value="http://medizininformatik-initiative.de/fhir/CodeSystem/report" />
+				<version value="2.0"></version>
+				<code value="hrp-identifier" />
+			</coding>
+		</type>
+		<valueReference>
+			<type value="Organization" />
+			<identifier>
+				<system value="http://dsf.dev/sid/organization-identifier" />
+				<version value="2.0"></version>
+				<value value="Test_HRP" />
+			</identifier>
+		</valueReference>
+	</input>
+	-->
+	<!--
+	<input>
+		<type>
+			<coding>
+				<system value="http://medizininformatik-initiative.de/fhir/CodeSystem/report" />
+				<version value="2.0"></version>
+				<code value="dry-run" />
+			</coding>
+		</type>
+		<valueBoolean value="false" />
+	</input>
+	-->
 </Task>

@@ -13,16 +13,17 @@ import de.medizininformatik_initiative.process.report.ConstantsReport;
 
 public class ReportStatusGenerator
 {
-	public ParameterComponent createReportStatusInput(String statusCode)
+	public ParameterComponent createReportStatusInput(String statusVersion, String statusCode)
 	{
-		return createReportStatusInput(statusCode, null);
+		return createReportStatusInput(statusVersion, statusCode, null);
 	}
 
-	public ParameterComponent createReportStatusInput(String statusCode, String errorMessage)
+	public ParameterComponent createReportStatusInput(String statusVersion, String statusCode, String errorMessage)
 	{
 		ParameterComponent input = new ParameterComponent();
-		input.setValue(new Coding().setSystem(ConstantsReport.CODESYSTEM_REPORT_STATUS).setCode(statusCode));
-		input.getType().addCoding().setSystem(ConstantsReport.CODESYSTEM_REPORT)
+		input.setValue(new Coding().setSystem(ConstantsReport.CODESYSTEM_REPORT_STATUS).setVersion(statusVersion)
+				.setCode(statusCode));
+		input.getType().addCoding().setSystem(ConstantsReport.CODESYSTEM_REPORT).setVersion(statusVersion)
 				.setCode(ConstantsReport.CODESYSTEM_REPORT_VALUE_REPORT_STATUS);
 
 		if (errorMessage != null)
@@ -31,16 +32,17 @@ public class ReportStatusGenerator
 		return input;
 	}
 
-	public TaskOutputComponent createReportStatusOutput(String statusCode)
+	public TaskOutputComponent createReportStatusOutput(String statusVersion, String statusCode)
 	{
-		return createReportStatusOutput(statusCode, null);
+		return createReportStatusOutput(statusVersion, statusCode, null);
 	}
 
-	public TaskOutputComponent createReportStatusOutput(String statusCode, String errorMessage)
+	public TaskOutputComponent createReportStatusOutput(String statusVersion, String statusCode, String errorMessage)
 	{
 		TaskOutputComponent output = new TaskOutputComponent();
-		output.setValue(new Coding().setSystem(ConstantsReport.CODESYSTEM_REPORT_STATUS).setCode(statusCode));
-		output.getType().addCoding().setSystem(ConstantsReport.CODESYSTEM_REPORT)
+		output.setValue(new Coding().setSystem(ConstantsReport.CODESYSTEM_REPORT_STATUS).setVersion(statusVersion)
+				.setCode(statusCode));
+		output.getType().addCoding().setSystem(ConstantsReport.CODESYSTEM_REPORT).setVersion(statusVersion)
 				.setCode(ConstantsReport.CODESYSTEM_REPORT_VALUE_REPORT_STATUS);
 
 		if (errorMessage != null)

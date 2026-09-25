@@ -1,79 +1,78 @@
 package de.medizininformatik_initiative.process.report.message;
 
+import java.util.List;
 import java.util.Objects;
-import java.util.stream.Stream;
+import java.util.function.Function;
 
-import org.camunda.bpm.engine.delegate.DelegateExecution;
-import org.hl7.fhir.r4.model.IdType;
 import org.hl7.fhir.r4.model.Reference;
 import org.hl7.fhir.r4.model.ResourceType;
 import org.hl7.fhir.r4.model.Task;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
 
 import de.medizininformatik_initiative.process.report.ConstantsReport;
-import de.medizininformatik_initiative.process.report.service.AggregateReports;
 import de.medizininformatik_initiative.process.report.util.ReportStatusGenerator;
-import de.medizininformatik_initiative.processes.common.util.ConstantsBase;
-import dev.dsf.bpe.v1.ProcessPluginApi;
-import dev.dsf.bpe.v1.activity.AbstractTaskMessageSend;
-import dev.dsf.bpe.v1.variables.Variables;
-import dev.dsf.fhir.client.FhirWebserviceClient;
+import de.medizininformatik_initiative.processes.common.activity.RetryTaskSender;
+import de.medizininformatik_initiative.processes.common.error.MessageIntermediateThrowEventErrorHandlerWithTaskOutput;
+import dev.dsf.bpe.v2.ProcessPluginApi;
+import dev.dsf.bpe.v2.activity.MessageIntermediateThrowEvent;
+import dev.dsf.bpe.v2.activity.task.TaskSender;
+import dev.dsf.bpe.v2.activity.values.SendTaskValues;
+import dev.dsf.bpe.v2.error.MessageIntermediateThrowEventErrorHandler;
+import dev.dsf.bpe.v2.variables.Target;
+import dev.dsf.bpe.v2.variables.Variables;
 import jakarta.ws.rs.WebApplicationException;
 import jakarta.ws.rs.core.Response;
 
-public class SendReport extends AbstractTaskMessageSend implements InitializingBean
+public class SendReport implements MessageIntermediateThrowEvent, InitializingBean
 {
-	private static final Logger logger = LoggerFactory.getLogger(SendReport.class);
-
+	private final ProcessPluginApi api;
 	private final ReportStatusGenerator statusGenerator;
 
 	public SendReport(ProcessPluginApi api, ReportStatusGenerator statusGenerator)
 	{
-		super(api);
+		this.api = api;
 		this.statusGenerator = statusGenerator;
 	}
 
 	@Override
 	public void afterPropertiesSet() throws Exception
 	{
-		super.afterPropertiesSet();
+		Objects.requireNonNull(api, "api");
 		Objects.requireNonNull(statusGenerator, "statusGenerator");
 	}
 
 	@Override
-	protected Stream<Task.ParameterComponent> getAdditionalInputParameters(DelegateExecution execution,
-			Variables variables)
+	public TaskSender getTaskSender(ProcessPluginApi api, Variables variables, SendTaskValues sendTaskValues)
+	{
+		return new RetryTaskSender(api, variables, sendTaskValues, getBusinessKeyStrategy(),
+				(target) -> getAdditionalInputParameters(api, variables, sendTaskValues, target));
+	}
+
+	@Override
+	public List<Task.ParameterComponent> getAdditionalInputParameters(ProcessPluginApi api, Variables variables,
+			SendTaskValues sendTaskValues, Target target)
 	{
 		String bundleId = variables
 				.getString(ConstantsReport.BPMN_EXECUTION_VARIABLE_REPORT_SEARCH_BUNDLE_RESPONSE_REFERENCE);
 
 		Task.ParameterComponent parameterComponent = new Task.ParameterComponent();
 		parameterComponent.getType().addCoding().setSystem(ConstantsReport.CODESYSTEM_REPORT)
+				.setVersion(api.getProcessPluginDefinition().getResourceVersion())
 				.setCode(ConstantsReport.CODESYSTEM_REPORT_VALUE_SEARCH_BUNDLE_RESPONSE_REFERENCE);
 		parameterComponent.setValue(new Reference(bundleId).setType(ResourceType.Bundle.name()));
 
-		return Stream.of(parameterComponent);
+		return List.of(parameterComponent);
 	}
 
 	@Override
-	protected IdType doSend(FhirWebserviceClient client, Task task)
+	public MessageIntermediateThrowEventErrorHandler getErrorHandler()
 	{
-		logger.info("SendReport doSend");
-
-		return client.withMinimalReturn()
-				.withRetry(ConstantsBase.DSF_CLIENT_RETRY_6_TIMES, ConstantsBase.DSF_CLIENT_RETRY_INTERVAL_5MIN)
-				.create(task);
+		return new MessageIntermediateThrowEventErrorHandlerWithTaskOutput(getOutputGenerator());
 	}
 
-	@Override
-	protected void handleIntermediateThrowEventError(DelegateExecution execution, Variables variables,
-			Exception exception, String errorMessage)
+	private Function<Exception, Task.TaskOutputComponent> getOutputGenerator()
 	{
-		Task task = variables.getStartTask();
-
-		if (task != null)
+		return (exception) ->
 		{
 			String statusCode = ConstantsReport.CODESYSTEM_REPORT_STATUS_VALUE_NOT_REACHABLE;
 			if (exception instanceof WebApplicationException webApplicationException
@@ -83,16 +82,8 @@ public class SendReport extends AbstractTaskMessageSend implements InitializingB
 				statusCode = ConstantsReport.CODESYSTEM_REPORT_STATUS_VALUE_NOT_ALLOWED;
 			}
 
-			task.addOutput(statusGenerator.createReportStatusOutput(statusCode, "Send report failed"));
-			variables.updateTask(task);
-		}
-
-		super.handleIntermediateThrowEventError(execution, variables, exception, errorMessage);
-	}
-
-	@Override
-	protected void addErrorMessage(Task task, String errorMessage)
-	{
-		// Override in order not to add error message of AbstractTaskMessageSend
+			return statusGenerator.createReportStatusOutput(api.getProcessPluginDefinition().getResourceVersion(),
+					statusCode, "Send report failed");
+		};
 	}
 }

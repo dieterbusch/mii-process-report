@@ -1,48 +1,52 @@
 package de.medizininformatik_initiative.process.report.message;
 
+import java.util.List;
 import java.util.Optional;
-import java.util.UUID;
-import java.util.stream.Stream;
 
-import org.camunda.bpm.engine.delegate.DelegateExecution;
 import org.hl7.fhir.r4.model.Reference;
 import org.hl7.fhir.r4.model.Task;
 
 import de.medizininformatik_initiative.process.report.ConstantsReport;
-import dev.dsf.bpe.v1.ProcessPluginApi;
-import dev.dsf.bpe.v1.activity.AbstractTaskMessageSend;
-import dev.dsf.bpe.v1.variables.Target;
-import dev.dsf.bpe.v1.variables.Variables;
+import de.medizininformatik_initiative.processes.common.activity.RetryTaskSender;
+import de.medizininformatik_initiative.processes.common.error.MessageIntermediateThrowEventErrorHandlerContinuingProcess;
+import dev.dsf.bpe.v2.ProcessPluginApi;
+import dev.dsf.bpe.v2.activity.MessageIntermediateThrowEvent;
+import dev.dsf.bpe.v2.activity.task.BusinessKeyStrategies;
+import dev.dsf.bpe.v2.activity.task.TaskSender;
+import dev.dsf.bpe.v2.activity.values.SendTaskValues;
+import dev.dsf.bpe.v2.error.MessageIntermediateThrowEventErrorHandler;
+import dev.dsf.bpe.v2.variables.Target;
+import dev.dsf.bpe.v2.variables.Variables;
 
-public class StartSendReport extends AbstractTaskMessageSend
+public class StartSendReport implements MessageIntermediateThrowEvent
 {
 
-	public StartSendReport(ProcessPluginApi api)
+	@Override
+	public TaskSender getTaskSender(ProcessPluginApi api, Variables variables, SendTaskValues sendTaskValues)
 	{
-		super(api);
+		return new RetryTaskSender(api, variables, sendTaskValues, BusinessKeyStrategies.NEW,
+				(target) -> getAdditionalInputParameters(api, variables, sendTaskValues, target));
 	}
 
 	@Override
-	protected void sendTask(DelegateExecution execution, Variables variables, Target target,
-			String instantiatesCanonical, String messageName, String businessKey, String profile,
-			Stream<Task.ParameterComponent> additionalInputParameters)
-	{
-		// Use different business key as autostart process to allow parallel creation of reports
-		super.sendTask(execution, variables, target, instantiatesCanonical, messageName, UUID.randomUUID().toString(),
-				profile, additionalInputParameters);
-	}
-
-	@Override
-	protected Stream<Task.ParameterComponent> getAdditionalInputParameters(DelegateExecution execution,
-			Variables variables)
+	public List<Task.ParameterComponent> getAdditionalInputParameters(ProcessPluginApi api, Variables variables,
+			SendTaskValues sendTaskValues, Target target)
 	{
 		Task startTask = variables.getStartTask();
-
 		Optional<Reference> hrpIdentifier = api.getTaskHelper().getFirstInputParameterValue(startTask,
 				ConstantsReport.CODESYSTEM_REPORT, ConstantsReport.CODESYSTEM_REPORT_VALUE_HRP_IDENTIFIER,
 				Reference.class);
 
-		return hrpIdentifier.stream().map(r -> api.getTaskHelper().createInput(r, ConstantsReport.CODESYSTEM_REPORT,
-				ConstantsReport.CODESYSTEM_REPORT_VALUE_HRP_IDENTIFIER));
+		return hrpIdentifier.stream()
+				.map(r -> api.getTaskHelper().createInput(r, ConstantsReport.CODESYSTEM_REPORT,
+						ConstantsReport.CODESYSTEM_REPORT_VALUE_HRP_IDENTIFIER,
+						api.getProcessPluginDefinition().getResourceVersion()))
+				.toList();
+	}
+
+	@Override
+	public MessageIntermediateThrowEventErrorHandler getErrorHandler()
+	{
+		return new MessageIntermediateThrowEventErrorHandlerContinuingProcess();
 	}
 }

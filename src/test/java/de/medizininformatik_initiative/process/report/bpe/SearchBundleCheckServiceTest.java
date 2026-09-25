@@ -7,12 +7,16 @@ import java.io.InputStream;
 
 import org.hl7.fhir.r4.model.Bundle;
 import org.junit.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import ca.uhn.fhir.context.FhirContext;
 import de.medizininformatik_initiative.process.report.util.SearchQueryCheckService;
 
 public class SearchBundleCheckServiceTest
 {
+	private static final Logger logger = LoggerFactory.getLogger(SearchBundleCheckServiceTest.class);
+
 	@Test
 	public void testValid()
 	{
@@ -64,13 +68,14 @@ public class SearchBundleCheckServiceTest
 	@Test
 	public void testInvalidSummaryUrlEncoded()
 	{
-		testInvalid("/fhir/Bundle/search-bundle-invalid-summary-url-encoded.xml", "invalid search params");
+		testInvalid("/fhir/Bundle/search-bundle-invalid-summary-url-encoded.xml", "more than one _summary parameter");
 	}
 
 	@Test
 	public void testInvalidSummaryUrlEncodedFull()
 	{
-		testInvalid("/fhir/Bundle/search-bundle-invalid-summary-url-encoded-full.xml", "invalid search params");
+		testInvalid("/fhir/Bundle/search-bundle-invalid-summary-url-encoded-full.xml",
+				"more than one _summary parameter");
 	}
 
 	@Test
@@ -116,6 +121,18 @@ public class SearchBundleCheckServiceTest
 	}
 
 	@Test
+	public void testInvalidCodeOr1()
+	{
+		testInvalid("/fhir/Bundle/search-bundle-invalid-code-or1.xml", "not limited to system");
+	}
+
+	@Test
+	public void testInvalidCodeOr2()
+	{
+		testInvalid("/fhir/Bundle/search-bundle-invalid-code-or2.xml", "not limited to system");
+	}
+
+	@Test
 	public void testInvalidCodeIngredient()
 	{
 		testInvalid("/fhir/Bundle/search-bundle-invalid-code-ingredient.xml", "not limited to system");
@@ -130,6 +147,7 @@ public class SearchBundleCheckServiceTest
 		}
 		catch (Exception exception)
 		{
+			logger.error(exception.getMessage(), exception);
 			fail();
 		}
 	}

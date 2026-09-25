@@ -4,14 +4,13 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
 
-import de.medizininformatik_initiative.process.report.spring.config.FhirClientConfig;
 import de.medizininformatik_initiative.process.report.spring.config.ReportConfig;
-import dev.dsf.bpe.v1.ProcessPluginDefinition;
+import dev.dsf.bpe.v2.ProcessPluginDefinition;
 
 public class ReportProcessPluginDefinition implements ProcessPluginDefinition
 {
-	public static final String VERSION = "1.2.1.0";
-	public static final LocalDate RELEASE_DATE = LocalDate.of(2025, 9, 12);
+	public static final String VERSION = "2.0.0.0";
+	public static final LocalDate RELEASE_DATE = LocalDate.of(2026, 6, 19);
 
 	@Override
 	public String getName()
@@ -40,7 +39,7 @@ public class ReportProcessPluginDefinition implements ProcessPluginDefinition
 	@Override
 	public List<Class<?>> getSpringConfigurations()
 	{
-		return List.of(ReportConfig.class, FhirClientConfig.class);
+		return List.of(ReportConfig.class);
 	}
 
 	public Map<String, List<String>> getFhirResourcesByProcessId()
@@ -73,13 +72,16 @@ public class ReportProcessPluginDefinition implements ProcessPluginDefinition
 		var vReportStatusReceive = "fhir/ValueSet/report-status-receive.xml";
 		var vReportStatusSend = "fhir/ValueSet/report-status-send.xml";
 
-		return Map.of(ConstantsReport.PROCESS_NAME_FULL_REPORT_AUTOSTART,
-				List.of(aAutostart, cReport, sAutostartStart, sAutostartStop, tAutostartStart, tAutostartStop, vReport),
-				ConstantsReport.PROCESS_NAME_FULL_REPORT_RECEIVE,
-				List.of(aReceive, cReport, cReportStatus, eReportStatusError, nReportIdent, nSearchBundleIdent,
-						sSearchBundle, sSearchBundleResponse, sSend, vReport, vReportStatusReceive),
-				ConstantsReport.PROCESS_NAME_FULL_REPORT_SEND,
-				List.of(aSend, cReport, cReportStatus, eReportStatusError, nReportIdent, nSearchBundleIdent, sReceive,
-						sSearchBundle, sSearchBundleResponse, sSendStart, tSendStart, vReport, vReportStatusSend));
+		return Map
+				.of(ConstantsReport.PROCESS_NAME_FULL_REPORT_AUTOSTART,
+						List.of(aAutostart, cReport, eReportStatusError, sAutostartStart, sAutostartStop,
+								tAutostartStart, tAutostartStop, vReport),
+						ConstantsReport.PROCESS_NAME_FULL_REPORT_RECEIVE,
+						List.of(aReceive, cReport, cReportStatus, eReportStatusError, nReportIdent, nSearchBundleIdent,
+								sSearchBundle, sSearchBundleResponse, sSend, vReport, vReportStatusReceive),
+						ConstantsReport.PROCESS_NAME_FULL_REPORT_SEND,
+						List.of(aSend, cReport, cReportStatus, eReportStatusError, nReportIdent, nSearchBundleIdent,
+								sReceive, sSearchBundle, sSearchBundleResponse, sSendStart, tSendStart, vReport,
+								vReportStatusSend));
 	}
 }

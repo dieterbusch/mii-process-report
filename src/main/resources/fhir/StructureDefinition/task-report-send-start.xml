@@ -1,5 +1,6 @@
 <StructureDefinition xmlns="http://hl7.org/fhir">
   <meta>
+    <profile value="http://dsf.dev/fhir/StructureDefinition/structure-definition" />
     <tag>
       <system value="http://dsf.dev/fhir/CodeSystem/read-access-tag" />
       <code value="ALL" />
@@ -18,7 +19,7 @@
   <kind value="resource" />
   <abstract value="false" />
   <type value="Task" />
-  <baseDefinition value="http://dsf.dev/fhir/StructureDefinition/task-base" />
+  <baseDefinition value="http://dsf.dev/fhir/StructureDefinition/task" />
   <derivation value="constraint" />
   <differential>
     <element id="Task.instantiatesCanonical">
@@ -71,6 +72,11 @@
       <min value="1" />
       <fixedUri value="http://medizininformatik-initiative.de/fhir/CodeSystem/report" />
     </element>
+    <element id="Task.input:dry-run.type.coding.version">
+      <path value="Task.input.type.coding.version"/>
+      <min value="1"/>
+      <fixedString value="#{version}"/>
+    </element>
     <element id="Task.input:dry-run.type.coding.code">
       <path value="Task.input.type.coding.code" />
       <min value="1" />
@@ -104,6 +110,11 @@
       <path value="Task.input.type.coding.system"/>
       <min value="1"/>
       <fixedUri value="http://medizininformatik-initiative.de/fhir/CodeSystem/report"/>
+    </element>
+    <element id="Task.input:hrp-identifier.type.coding.version">
+      <path value="Task.input.type.coding.version"/>
+      <min value="1"/>
+      <fixedString value="#{version}"/>
     </element>
     <element id="Task.input:hrp-identifier.type.coding.code">
       <path value="Task.input.type.coding.code"/>
@@ -166,6 +177,11 @@
       <min value="1"/>
       <fixedUri value="http://medizininformatik-initiative.de/fhir/CodeSystem/report"/>
     </element>
+    <element id="Task.output:report-status.type.coding.version">
+      <path value="Task.output.type.coding.version"/>
+      <min value="1"/>
+      <fixedString value="#{version}"/>
+    </element>
     <element id="Task.output:report-status.type.coding.code">
       <path value="Task.output.type.coding.code"/>
       <min value="1"/>
@@ -181,6 +197,11 @@
       <path value="Task.output.value[x].system"/>
       <min value="1"/>
       <fixedUri value="http://medizininformatik-initiative.de/fhir/CodeSystem/report-status"/>
+    </element>
+    <element id="Task.output:report-status.value[x].version">
+      <path value="Task.output.value[x].version"/>
+      <min value="1"/>
+      <fixedString value="#{version}"/>
     </element>
     <element id="Task.output:report-status.value[x].code">
       <path value="Task.output.value[x].code"/>

@@ -7,8 +7,6 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import org.camunda.bpm.engine.delegate.BpmnError;
-import org.camunda.bpm.engine.delegate.DelegateExecution;
 import org.hl7.fhir.r4.model.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -18,14 +16,13 @@ import de.medizininformatik_initiative.process.report.ConstantsReport;
 import de.medizininformatik_initiative.process.report.HrpExtracter;
 import de.medizininformatik_initiative.process.report.SaveOrUpdateBundle;
 import de.medizininformatik_initiative.processes.common.util.ConstantsBase;
-import dev.dsf.bpe.v1.ProcessPluginApi;
-import dev.dsf.bpe.v1.activity.AbstractServiceDelegate;
-import dev.dsf.bpe.v1.constants.NamingSystems;
-import dev.dsf.bpe.v1.variables.Variables;
-import dev.dsf.fhir.client.FhirWebserviceClient;
+import dev.dsf.bpe.v2.ProcessPluginApi;
+import dev.dsf.bpe.v2.activity.ServiceTask;
+import dev.dsf.bpe.v2.client.dsf.DsfClient;
+import dev.dsf.bpe.v2.constants.NamingSystems;
+import dev.dsf.bpe.v2.variables.Variables;
 
-public class AggregateReports extends AbstractServiceDelegate
-		implements InitializingBean, SaveOrUpdateBundle, HrpExtracter
+public class AggregateReports implements InitializingBean, SaveOrUpdateBundle, HrpExtracter, ServiceTask
 {
 	private static final Logger logger = LoggerFactory.getLogger(AggregateReports.class);
 
@@ -33,29 +30,31 @@ public class AggregateReports extends AbstractServiceDelegate
 	private final String reportReceiveOrganizationIdentifier;
 	private final String hrpIdentifierEnvVariable;
 
-	private FhirWebserviceClient localWebserviceClient;
 
-	public AggregateReports(ProcessPluginApi api, String hrpIdentifierEnvVariable,
-			String reportReceiveOrganizationIdentifier)
+	public AggregateReports(String hrpIdentifierEnvVariable, String reportReceiveOrganizationIdentifier)
 	{
-		super(api);
-
 
 		this.reportReceiveOrganizationIdentifier = reportReceiveOrganizationIdentifier;
 		this.hrpIdentifierEnvVariable = hrpIdentifierEnvVariable;
-		this.localWebserviceClient = api.getFhirWebserviceClientProvider().getLocalWebserviceClient();
 	}
 
 	@Override
-	protected void doExecute(DelegateExecution delegateExecution, Variables variables) throws BpmnError, Exception
+	public void afterPropertiesSet() throws Exception
+	{
+		logger.info("AggregateReports afterPropertiesSet");
+	}
+
+	@Override
+	public void execute(ProcessPluginApi api, Variables variables)
 	{
 		logger.info("AggregateReports doExecute");
+
+		DsfClient localClient = api.getDsfClientProvider().getLocal();
 
 		Identifier parentIdentifier = NamingSystems.OrganizationIdentifier
 				.withValue(reportReceiveOrganizationIdentifier != null && !reportReceiveOrganizationIdentifier.isEmpty()
 						? reportReceiveOrganizationIdentifier
 						: ConstantsBase.NAMINGSYSTEM_DSF_ORGANIZATION_IDENTIFIER_MEDICAL_INFORMATICS_INITIATIVE_CONSORTIUM);
-
 
 		api.getOrganizationProvider().getLocalOrganizationIdentifierValue()
 				.ifPresent(organizationIdentifierValue -> api.getOrganizationProvider()
@@ -65,20 +64,20 @@ public class AggregateReports extends AbstractServiceDelegate
 							String identifierValue = ConstantsReport.NAMINGSYSTEM_CDS_REPORT_IDENTIFIER + "|"
 									+ org.getIdentifierFirstRep().getValue();
 
-							Bundle search = searchBundleLocal(localWebserviceClient, identifierValue);
+							Bundle search = searchBundleLocal(localClient, identifierValue);
 							if (search == null || search.getEntry().isEmpty())
 							{
-								logger.warn("No matching bundle found for identifier: " + identifierValue);
+								logger.warn("No matching bundle found for identifier: {}", identifierValue);
 								return Stream.empty();
 							}
 							if (search.getEntry().size() > 1)
 							{
-								logger.error("Found more than one merge bundle for organization identifier: "
-										+ identifierValue);
+								logger.error("Found more than one merge bundle for organization identifier: {}",
+										identifierValue);
 								return Stream.empty(); // Organisation überspringen
 							}
 							// genau 1 Entry vorhanden
-							var res = search.getEntry().get(0).getResource();
+							var res = search.getEntry().getFirst().getResource();
 							return (res instanceof Bundle b) ? Stream.of(b) : Stream.empty();
 						}).reduce((base, next) ->
 						{
@@ -96,16 +95,16 @@ public class AggregateReports extends AbstractServiceDelegate
 
 							String searchBundleIdentifier = ConstantsReport.NAMINGSYSTEM_CDS_REPORT_IDENTIFIER + "|"
 									+ organizationIdentifierValue;
-							Resource r = saveOrUpdate(localWebserviceClient, mergeBundle, searchBundleIdentifier);
+							Resource r = saveOrUpdate(localClient, mergeBundle, searchBundleIdentifier);
 
-							setReportSearchBundleResponseReference(variables, r.getIdElement().getIdPart(),
+							setReportSearchBundleResponseReference(api, variables, r.getIdElement().getIdPart(),
 									r.getMeta().getVersionId(), organizationIdentifierValue);
 						}));
 
 	}
 
-	private void setReportSearchBundleResponseReference(Variables variables, String id, String versionId,
-			String brokerHrpId)
+	private void setReportSearchBundleResponseReference(ProcessPluginApi api, Variables variables, String id,
+			String versionId, String brokerHrpId)
 	{
 		String absoluteId = new IdType(api.getEndpointProvider().getLocalEndpointAddress(), ResourceType.Bundle.name(),
 				id, versionId).getValue();
@@ -138,7 +137,7 @@ public class AggregateReports extends AbstractServiceDelegate
 						if (url.getResource() != null && url.getResource() instanceof Bundle bundle
 								&& !bundle.getLink().isEmpty())
 						{
-							return bundle.getLink().get(0).getUrl();
+							return bundle.getLink().getFirst().getUrl();
 
 						}
 						if (checkSkipEntryBundle(url))
@@ -164,7 +163,7 @@ public class AggregateReports extends AbstractServiceDelegate
 				if (entry.getResource() != null && entry.getResource() instanceof Bundle bundle
 						&& !bundle.getLink().isEmpty())
 				{
-					String url = bundle.getLink().get(0).getUrl();
+					String url = bundle.getLink().getFirst().getUrl();
 					if (nextBundleUrlsAndTotals.containsKey(url))
 					{
 						Integer total = nextBundleUrlsAndTotals.get(url);
@@ -188,5 +187,6 @@ public class AggregateReports extends AbstractServiceDelegate
 		}
 		return false;
 	}
+
 
 }
