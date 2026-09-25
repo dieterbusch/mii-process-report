@@ -6,15 +6,19 @@ In this repository you will find the process to send reports of current FHIR sto
 The documentation of the process including the description, the deployment and configuration guides as well as instructions on how to start a process instance can be found in the [wiki](https://github.com/medizininformatik-initiative/mii-process-report/wiki).
 
 ### Fork additions:
-```dotenv
-    #  defualt: false
-    EDU_UBI_MEDFAK_REPORT_DSF_PROCESS_DISTRIBUTE_AS_BROKER: false
-    #  defualt: medizininformatik-initiative.de
-    EDU_UBI_MEDFAK_REPORT_DSF_PROCESS_RECEIVE_ORGANIZATION_IDENTIFIER_VALUE: distributed-org.de
-    #  defualt: medizininformatik-initiative.de
-    EDU_UBI_MEDFAK_REPORT_DSF_PROCESS_SEND_ORGANIZATION_IDENTIFIER_VALUE: distributed-org.de
-    #  default: P1D
-    EDU_UBI_MEDFAK_REPORT_DSF_PROCESS_DISTRIBUTE_WAIT_AGGREGATE_INTERVALL: PT1S
+```yaml
+services:
+  bpe:
+    image: ghcr.io/datasharingframework/bpe:2.1.1
+    environment:
+      #  defualt: false
+      EDU_UBI_MEDFAK_REPORT_DSF_PROCESS_DISTRIBUTE_AS_BROKER: false
+      #  defualt: medizininformatik-initiative.de
+      EDU_UBI_MEDFAK_REPORT_DSF_PROCESS_RECEIVE_ORGANIZATION_IDENTIFIER_VALUE: distributed-org.de
+      #  defualt: medizininformatik-initiative.de
+      EDU_UBI_MEDFAK_REPORT_DSF_PROCESS_SEND_ORGANIZATION_IDENTIFIER_VALUE: distributed-org.de
+      #  default: P1D
+      EDU_UBI_MEDFAK_REPORT_DSF_PROCESS_DISTRIBUTE_WAIT_AGGREGATE_INTERVALL: PT1S
 ```
 
 
